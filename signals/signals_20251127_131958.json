@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-27T13:19:58.297942",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SP400": [
+      {
+        "ticker": "MUR",
+        "index": "SP400",
+        "predicted_return": 0.07948,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 31.45,
+        "limit_sell": 32.94,
+        "timestamp": "2025-11-27T13:19:58.297820"
+      },
+      {
+        "ticker": "FN",
+        "index": "SP400",
+        "predicted_return": 0.06777,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 449.06,
+        "limit_sell": 467.78,
+        "timestamp": "2025-11-27T13:19:58.297856"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "MUR",
+      "index": "SP400",
+      "predicted_return": 0.07948,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 31.45,
+      "limit_sell": 32.94,
+      "timestamp": "2025-11-27T13:19:58.297820"
+    },
+    {
+      "ticker": "FN",
+      "index": "SP400",
+      "predicted_return": 0.06777,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 449.06,
+      "limit_sell": 467.78,
+      "timestamp": "2025-11-27T13:19:58.297856"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SP400"
+    ],
+    "signals_per_index": {
+      "SP400": 2
+    },
+    "avg_predicted_return": 7.36,
+    "best_signal": "MUR",
+    "best_return": 0.07948
+  }
+}

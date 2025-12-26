@@ -1,0 +1,25 @@
+[Unit]
+Description=IB Gateway with IBC Auto-Login
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/ibc
+Environment="DISPLAY=:1"
+
+# Start Xvfb (virtual display) then IB Gateway
+ExecStartPre=/bin/bash -c '/usr/bin/Xvfb :1 -screen 0 1024x768x24 &'
+ExecStartPre=/bin/sleep 3
+ExecStart=/root/ibc/scripts/ibcstart.sh -g --ibc-path=/root/ibc --ibc-ini=/root/ibc/config.ini
+
+# Restart on failure
+Restart=on-failure
+RestartSec=60
+
+# Give Gateway time to shut down gracefully
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

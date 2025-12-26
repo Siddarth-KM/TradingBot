@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-10T20:31:27.636103",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SP400": [
+      {
+        "ticker": "ONTO",
+        "index": "SP400",
+        "predicted_return": 0.10449,
+        "direction": "up",
+        "direction_probability": 57.5,
+        "last_close": 141.07,
+        "limit_sell": 149.55,
+        "timestamp": "2025-11-10T20:31:27.636046"
+      },
+      {
+        "ticker": "ELF",
+        "index": "SP400",
+        "predicted_return": 0.08656,
+        "direction": "up",
+        "direction_probability": 65.0,
+        "last_close": 79.85,
+        "limit_sell": 84.34,
+        "timestamp": "2025-11-10T20:31:27.636065"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "ONTO",
+      "index": "SP400",
+      "predicted_return": 0.10449,
+      "direction": "up",
+      "direction_probability": 57.5,
+      "last_close": 141.07,
+      "limit_sell": 149.55,
+      "timestamp": "2025-11-10T20:31:27.636046"
+    },
+    {
+      "ticker": "ELF",
+      "index": "SP400",
+      "predicted_return": 0.08656,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 79.85,
+      "limit_sell": 84.34,
+      "timestamp": "2025-11-10T20:31:27.636065"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SP400"
+    ],
+    "signals_per_index": {
+      "SP400": 2
+    },
+    "avg_predicted_return": 9.55,
+    "best_signal": "ONTO",
+    "best_return": 0.10449
+  }
+}

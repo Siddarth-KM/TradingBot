@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-10-29T16:57:17.633011",
+  "prediction_window": 5,
+  "total_signals": 0,
+  "signals_by_index": {
+    "NASDAQ": []
+  },
+  "all_signals": [],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 0
+    },
+    "avg_predicted_return": 0,
+    "best_signal": null,
+    "best_return": 0
+  }
+}

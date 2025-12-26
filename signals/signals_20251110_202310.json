@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-10T20:23:10.158056",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "INTC",
+        "index": "SPY",
+        "predicted_return": 0.11118,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 38.45,
+        "limit_sell": 40.95,
+        "timestamp": "2025-11-10T20:23:10.157994"
+      },
+      {
+        "ticker": "TKO",
+        "index": "SPY",
+        "predicted_return": 0.08782,
+        "direction": "up",
+        "direction_probability": 66.5,
+        "last_close": 179.17,
+        "limit_sell": 189.63,
+        "timestamp": "2025-11-10T20:23:10.158017"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "INTC",
+      "index": "SPY",
+      "predicted_return": 0.11118,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 38.45,
+      "limit_sell": 40.95,
+      "timestamp": "2025-11-10T20:23:10.157994"
+    },
+    {
+      "ticker": "TKO",
+      "index": "SPY",
+      "predicted_return": 0.08782,
+      "direction": "up",
+      "direction_probability": 66.5,
+      "last_close": 179.17,
+      "limit_sell": 189.63,
+      "timestamp": "2025-11-10T20:23:10.158017"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY"
+    ],
+    "signals_per_index": {
+      "SPY": 2
+    },
+    "avg_predicted_return": 9.95,
+    "best_signal": "INTC",
+    "best_return": 0.11118
+  }
+}

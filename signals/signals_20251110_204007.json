@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-10T20:40:07.607590",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SPSM": [
+      {
+        "ticker": "AXL",
+        "index": "SPSM",
+        "predicted_return": 0.19888,
+        "direction": "up",
+        "direction_probability": 62.0,
+        "last_close": 6.17,
+        "limit_sell": 6.93,
+        "timestamp": "2025-11-10T20:40:07.607526"
+      },
+      {
+        "ticker": "KSS",
+        "index": "SPSM",
+        "predicted_return": 0.14864,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 17.91,
+        "limit_sell": 19.45,
+        "timestamp": "2025-11-10T20:40:07.607548"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "AXL",
+      "index": "SPSM",
+      "predicted_return": 0.19888,
+      "direction": "up",
+      "direction_probability": 62.0,
+      "last_close": 6.17,
+      "limit_sell": 6.93,
+      "timestamp": "2025-11-10T20:40:07.607526"
+    },
+    {
+      "ticker": "KSS",
+      "index": "SPSM",
+      "predicted_return": 0.14864,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 17.91,
+      "limit_sell": 19.45,
+      "timestamp": "2025-11-10T20:40:07.607548"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPSM": 2
+    },
+    "avg_predicted_return": 17.38,
+    "best_signal": "AXL",
+    "best_return": 0.19888
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-10-30T16:37:11.223903",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "BIIB",
+        "index": "NASDAQ",
+        "predicted_return": 0.03006,
+        "direction": "up",
+        "direction_probability": 66.5,
+        "last_close": 149.61,
+        "limit_sell": 152.6,
+        "timestamp": "2025-10-30T16:37:11.223846"
+      },
+      {
+        "ticker": "AXON",
+        "index": "NASDAQ",
+        "predicted_return": 0.02936,
+        "direction": "up",
+        "direction_probability": 62.5,
+        "last_close": 738.88,
+        "limit_sell": 752.44,
+        "timestamp": "2025-10-30T16:37:11.223866"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "BIIB",
+      "index": "NASDAQ",
+      "predicted_return": 0.03006,
+      "direction": "up",
+      "direction_probability": 66.5,
+      "last_close": 149.61,
+      "limit_sell": 152.6,
+      "timestamp": "2025-10-30T16:37:11.223846"
+    },
+    {
+      "ticker": "AXON",
+      "index": "NASDAQ",
+      "predicted_return": 0.02936,
+      "direction": "up",
+      "direction_probability": 62.5,
+      "last_close": 738.88,
+      "limit_sell": 752.44,
+      "timestamp": "2025-10-30T16:37:11.223866"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 2.97,
+    "best_signal": "BIIB",
+    "best_return": 0.03006
+  }
+}

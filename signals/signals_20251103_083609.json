@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-03T08:36:09.129533",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "SHOP",
+        "index": "NASDAQ",
+        "predicted_return": 0.03958,
+        "direction": "up",
+        "direction_probability": 64.5,
+        "last_close": 173.86,
+        "limit_sell": 178.3,
+        "timestamp": "2025-11-03T08:36:09.129416"
+      },
+      {
+        "ticker": "AXON",
+        "index": "NASDAQ",
+        "predicted_return": 0.03814,
+        "direction": "up",
+        "direction_probability": 62.5,
+        "last_close": 732.23,
+        "limit_sell": 749.68,
+        "timestamp": "2025-11-03T08:36:09.129449"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "SHOP",
+      "index": "NASDAQ",
+      "predicted_return": 0.03958,
+      "direction": "up",
+      "direction_probability": 64.5,
+      "last_close": 173.86,
+      "limit_sell": 178.3,
+      "timestamp": "2025-11-03T08:36:09.129416"
+    },
+    {
+      "ticker": "AXON",
+      "index": "NASDAQ",
+      "predicted_return": 0.03814,
+      "direction": "up",
+      "direction_probability": 62.5,
+      "last_close": 732.23,
+      "limit_sell": 749.68,
+      "timestamp": "2025-11-03T08:36:09.129449"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 3.89,
+    "best_signal": "SHOP",
+    "best_return": 0.03958
+  }
+}

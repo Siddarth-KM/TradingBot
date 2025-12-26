@@ -1,0 +1,25 @@
+[Unit]
+Description=Trading Bot Auto-Executor
+After=ibgateway.service
+Requires=ibgateway.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/tradingbot
+Environment="PATH=/root/tradingbot/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="DISPLAY=:1"
+
+# Run the trading bot in scheduled mode
+ExecStart=/root/tradingbot/.venv/bin/python /root/tradingbot/trade_executor.py schedule
+
+# Restart if it crashes
+Restart=always
+RestartSec=30
+
+# Logging
+StandardOutput=append:/var/log/tradingbot.log
+StandardError=append:/var/log/tradingbot.log
+
+[Install]
+WantedBy=multi-user.target

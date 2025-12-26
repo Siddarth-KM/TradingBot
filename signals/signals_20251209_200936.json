@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-12-09T20:09:36.617832",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "LRCX",
+        "index": "NASDAQ",
+        "predicted_return": 0.07614,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 165.81,
+        "limit_sell": 173.89,
+        "timestamp": "2025-12-09T20:09:36.617743"
+      },
+      {
+        "ticker": "PLTR",
+        "index": "NASDAQ",
+        "predicted_return": 0.07448,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 181.84,
+        "limit_sell": 189.76,
+        "timestamp": "2025-12-09T20:09:36.617760"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "LRCX",
+      "index": "NASDAQ",
+      "predicted_return": 0.07614,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 165.81,
+      "limit_sell": 173.89,
+      "timestamp": "2025-12-09T20:09:36.617743"
+    },
+    {
+      "ticker": "PLTR",
+      "index": "NASDAQ",
+      "predicted_return": 0.07448,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 181.84,
+      "limit_sell": 189.76,
+      "timestamp": "2025-12-09T20:09:36.617760"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 7.53,
+    "best_signal": "LRCX",
+    "best_return": 0.07614
+  }
+}

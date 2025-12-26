@@ -1,0 +1,27 @@
+[Unit]
+Description=Trading Bot Auto-Executor (Oracle Cloud)
+After=ibgateway.service
+Wants=ibgateway.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/tradingbot
+Environment="PATH=/opt/tradingbot/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="DISPLAY=:1"
+Environment="HOME=/home/ubuntu"
+
+# Run the trading bot in scheduled mode
+ExecStart=/opt/tradingbot/.venv/bin/python /opt/tradingbot/trade_executor.py schedule
+
+# Restart if it crashes
+Restart=always
+RestartSec=30
+
+# Logging
+StandardOutput=append:/var/log/tradingbot.log
+StandardError=append:/var/log/tradingbot.log
+
+[Install]
+WantedBy=multi-user.target

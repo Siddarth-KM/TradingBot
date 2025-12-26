@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-11-25T22:00:46.752420",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "WYNN",
+        "index": "SPY",
+        "predicted_return": 0.06683,
+        "direction": "up",
+        "direction_probability": 63.5,
+        "last_close": 127.47,
+        "limit_sell": 132.88,
+        "timestamp": "2025-11-25T22:00:46.752167"
+      },
+      {
+        "ticker": "MPC",
+        "index": "SPY",
+        "predicted_return": 0.04584,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 190.0,
+        "limit_sell": 195.18,
+        "timestamp": "2025-11-25T22:00:46.752208"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "PANW",
+        "index": "NASDAQ",
+        "predicted_return": 0.03234,
+        "direction": "up",
+        "direction_probability": 62.5,
+        "last_close": 186.27,
+        "limit_sell": 190.04,
+        "timestamp": "2025-11-25T22:00:46.752235"
+      },
+      {
+        "ticker": "AAPL",
+        "index": "NASDAQ",
+        "predicted_return": 0.02953,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 276.97,
+        "limit_sell": 281.92,
+        "timestamp": "2025-11-25T22:00:46.752257"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "LITE",
+        "index": "SP400",
+        "predicted_return": 0.08718,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 291.27,
+        "limit_sell": 306.12,
+        "timestamp": "2025-11-25T22:00:46.752281"
+      },
+      {
+        "ticker": "FN",
+        "index": "SP400",
+        "predicted_return": 0.0669,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 429.69,
+        "limit_sell": 447.37,
+        "timestamp": "2025-11-25T22:00:46.752303"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "SNDK",
+        "index": "SPSM",
+        "predicted_return": 0.10456,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 220.5,
+        "limit_sell": 234.22,
+        "timestamp": "2025-11-25T22:00:46.752325"
+      },
+      {
+        "ticker": "NEO",
+        "index": "SPSM",
+        "predicted_return": 0.10336,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 12.34,
+        "limit_sell": 13.11,
+        "timestamp": "2025-11-25T22:00:46.752347"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "SNDK",
+      "index": "SPSM",
+      "predicted_return": 0.10456,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 220.5,
+      "limit_sell": 234.22,
+      "timestamp": "2025-11-25T22:00:46.752325"
+    },
+    {
+      "ticker": "NEO",
+      "index": "SPSM",
+      "predicted_return": 0.10336,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 12.34,
+      "limit_sell": 13.11,
+      "timestamp": "2025-11-25T22:00:46.752347"
+    },
+    {
+      "ticker": "LITE",
+      "index": "SP400",
+      "predicted_return": 0.08718,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 291.27,
+      "limit_sell": 306.12,
+      "timestamp": "2025-11-25T22:00:46.752281"
+    },
+    {
+      "ticker": "FN",
+      "index": "SP400",
+      "predicted_return": 0.0669,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 429.69,
+      "limit_sell": 447.37,
+      "timestamp": "2025-11-25T22:00:46.752303"
+    },
+    {
+      "ticker": "WYNN",
+      "index": "SPY",
+      "predicted_return": 0.06683,
+      "direction": "up",
+      "direction_probability": 63.5,
+      "last_close": 127.47,
+      "limit_sell": 132.88,
+      "timestamp": "2025-11-25T22:00:46.752167"
+    },
+    {
+      "ticker": "MPC",
+      "index": "SPY",
+      "predicted_return": 0.04584,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 190.0,
+      "limit_sell": 195.18,
+      "timestamp": "2025-11-25T22:00:46.752208"
+    },
+    {
+      "ticker": "PANW",
+      "index": "NASDAQ",
+      "predicted_return": 0.03234,
+      "direction": "up",
+      "direction_probability": 62.5,
+      "last_close": 186.27,
+      "limit_sell": 190.04,
+      "timestamp": "2025-11-25T22:00:46.752235"
+    },
+    {
+      "ticker": "AAPL",
+      "index": "NASDAQ",
+      "predicted_return": 0.02953,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 276.97,
+      "limit_sell": 281.92,
+      "timestamp": "2025-11-25T22:00:46.752257"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 6.71,
+    "best_signal": "SNDK",
+    "best_return": 0.10456
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-12-22T22:24:08.074717",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "SNDK",
+        "index": "SPY",
+        "predicted_return": 0.13503,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 241.05,
+        "limit_sell": 260.42,
+        "timestamp": "2025-12-22T22:24:08.074508"
+      },
+      {
+        "ticker": "TER",
+        "index": "SPY",
+        "predicted_return": 0.09033,
+        "direction": "up",
+        "direction_probability": 65.0,
+        "last_close": 197.22,
+        "limit_sell": 208.8,
+        "timestamp": "2025-12-22T22:24:08.074539"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "AAPL",
+        "index": "NASDAQ",
+        "predicted_return": 0.05237,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 270.97,
+        "limit_sell": 279.56,
+        "timestamp": "2025-12-22T22:24:08.074549"
+      },
+      {
+        "ticker": "LRCX",
+        "index": "NASDAQ",
+        "predicted_return": 0.04877,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 175.26,
+        "limit_sell": 180.73,
+        "timestamp": "2025-12-22T22:24:08.074557"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "BHF",
+        "index": "SP400",
+        "predicted_return": 0.12683,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 64.86,
+        "limit_sell": 69.92,
+        "timestamp": "2025-12-22T22:24:08.074564"
+      },
+      {
+        "ticker": "UTHR",
+        "index": "SP400",
+        "predicted_return": 0.05329,
+        "direction": "up",
+        "direction_probability": 59.0,
+        "last_close": 513.79,
+        "limit_sell": 529.94,
+        "timestamp": "2025-12-22T22:24:08.074572"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "CRK",
+        "index": "SPSM",
+        "predicted_return": 0.09212,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 21.81,
+        "limit_sell": 23.01,
+        "timestamp": "2025-12-22T22:24:08.074578"
+      },
+      {
+        "ticker": "PDFS",
+        "index": "SPSM",
+        "predicted_return": 0.08071,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 29.04,
+        "limit_sell": 30.4,
+        "timestamp": "2025-12-22T22:24:08.074584"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "SNDK",
+      "index": "SPY",
+      "predicted_return": 0.13503,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 241.05,
+      "limit_sell": 260.42,
+      "timestamp": "2025-12-22T22:24:08.074508"
+    },
+    {
+      "ticker": "BHF",
+      "index": "SP400",
+      "predicted_return": 0.12683,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 64.86,
+      "limit_sell": 69.92,
+      "timestamp": "2025-12-22T22:24:08.074564"
+    },
+    {
+      "ticker": "CRK",
+      "index": "SPSM",
+      "predicted_return": 0.09212,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 21.81,
+      "limit_sell": 23.01,
+      "timestamp": "2025-12-22T22:24:08.074578"
+    },
+    {
+      "ticker": "TER",
+      "index": "SPY",
+      "predicted_return": 0.09033,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 197.22,
+      "limit_sell": 208.8,
+      "timestamp": "2025-12-22T22:24:08.074539"
+    },
+    {
+      "ticker": "PDFS",
+      "index": "SPSM",
+      "predicted_return": 0.08071,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 29.04,
+      "limit_sell": 30.4,
+      "timestamp": "2025-12-22T22:24:08.074584"
+    },
+    {
+      "ticker": "UTHR",
+      "index": "SP400",
+      "predicted_return": 0.05329,
+      "direction": "up",
+      "direction_probability": 59.0,
+      "last_close": 513.79,
+      "limit_sell": 529.94,
+      "timestamp": "2025-12-22T22:24:08.074572"
+    },
+    {
+      "ticker": "AAPL",
+      "index": "NASDAQ",
+      "predicted_return": 0.05237,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 270.97,
+      "limit_sell": 279.56,
+      "timestamp": "2025-12-22T22:24:08.074549"
+    },
+    {
+      "ticker": "LRCX",
+      "index": "NASDAQ",
+      "predicted_return": 0.04877,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 175.26,
+      "limit_sell": 180.73,
+      "timestamp": "2025-12-22T22:24:08.074557"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 8.49,
+    "best_signal": "SNDK",
+    "best_return": 0.13503
+  }
+}

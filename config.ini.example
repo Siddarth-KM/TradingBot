@@ -1,0 +1,14 @@
+[ibc]
+; Example IBC/IB Gateway config - copy to config.ini and fill with real values
+; Keep this file committed, keep real config.ini out of git
+; Set secure permissions on the real config: chmod 600 /opt/ibc/config.ini
+
+IbLoginId=DU1234567
+IbPassword=YOUR_IB_PASSWORD
+TradingMode=paper
+ExistingSessionDetectedAction=primaryoverride
+LoginDialogDisplayTimeout=180
+
+[api]
+; Put API keys in environment variables or here for local testing only
+ALPHA_VANTAGE_API_KEY=YOUR_ALPHA_VANTAGE_API_KEY

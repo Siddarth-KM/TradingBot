@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-03T08:56:46.535090",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "XYL",
+        "index": "SPY",
+        "predicted_return": 0.04709,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 150.85,
+        "limit_sell": 155.4,
+        "timestamp": "2025-11-03T08:56:46.535025"
+      },
+      {
+        "ticker": "MPWR",
+        "index": "SPY",
+        "predicted_return": 0.03735,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 1005.0,
+        "limit_sell": 1027.71,
+        "timestamp": "2025-11-03T08:56:46.535051"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "XYL",
+      "index": "SPY",
+      "predicted_return": 0.04709,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 150.85,
+      "limit_sell": 155.4,
+      "timestamp": "2025-11-03T08:56:46.535025"
+    },
+    {
+      "ticker": "MPWR",
+      "index": "SPY",
+      "predicted_return": 0.03735,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 1005.0,
+      "limit_sell": 1027.71,
+      "timestamp": "2025-11-03T08:56:46.535051"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY"
+    ],
+    "signals_per_index": {
+      "SPY": 2
+    },
+    "avg_predicted_return": 4.22,
+    "best_signal": "XYL",
+    "best_return": 0.04709
+  }
+}

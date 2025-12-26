@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-12-23T18:18:14.174937",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SPSM": [
+      {
+        "ticker": "LBRT",
+        "index": "SPSM",
+        "predicted_return": 0.10668,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 18.55,
+        "limit_sell": 19.77,
+        "timestamp": "2025-12-23T18:18:14.174824"
+      },
+      {
+        "ticker": "CRK",
+        "index": "SPSM",
+        "predicted_return": 0.10475,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 23.06,
+        "limit_sell": 24.5,
+        "timestamp": "2025-12-23T18:18:14.174847"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "LBRT",
+      "index": "SPSM",
+      "predicted_return": 0.10668,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 18.55,
+      "limit_sell": 19.77,
+      "timestamp": "2025-12-23T18:18:14.174824"
+    },
+    {
+      "ticker": "CRK",
+      "index": "SPSM",
+      "predicted_return": 0.10475,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 23.06,
+      "limit_sell": 24.5,
+      "timestamp": "2025-12-23T18:18:14.174847"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPSM": 2
+    },
+    "avg_predicted_return": 10.57,
+    "best_signal": "LBRT",
+    "best_return": 0.10668
+  }
+}

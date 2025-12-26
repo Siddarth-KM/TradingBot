@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-10-30T14:29:04.083323",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "BIIB",
+        "action": "BUY",
+        "index": "NASDAQ",
+        "predicted_return": 0.02896592059546088,
+        "predicted_return_pct": 2.896592059546088,
+        "direction": "up",
+        "direction_probability": 66.5,
+        "last_close": 147.86000061035156,
+        "hold_days": 5,
+        "timestamp": "2025-10-30T14:29:04.083208"
+      },
+      {
+        "ticker": "EA",
+        "action": "BUY",
+        "index": "NASDAQ",
+        "predicted_return": 0.02781679792042905,
+        "predicted_return_pct": 2.781679792042905,
+        "direction": "up",
+        "direction_probability": 64.5,
+        "last_close": 200.1999969482422,
+        "hold_days": 5,
+        "timestamp": "2025-10-30T14:29:04.083227"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "BIIB",
+      "action": "BUY",
+      "index": "NASDAQ",
+      "predicted_return": 0.02896592059546088,
+      "predicted_return_pct": 2.896592059546088,
+      "direction": "up",
+      "direction_probability": 66.5,
+      "last_close": 147.86000061035156,
+      "hold_days": 5,
+      "timestamp": "2025-10-30T14:29:04.083208"
+    },
+    {
+      "ticker": "EA",
+      "action": "BUY",
+      "index": "NASDAQ",
+      "predicted_return": 0.02781679792042905,
+      "predicted_return_pct": 2.781679792042905,
+      "direction": "up",
+      "direction_probability": 64.5,
+      "last_close": 200.1999969482422,
+      "hold_days": 5,
+      "timestamp": "2025-10-30T14:29:04.083227"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 2.8391359257944964,
+    "best_signal": "BIIB",
+    "best_return": 2.896592059546088
+  }
+}

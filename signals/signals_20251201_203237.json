@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-12-01T20:32:37.148055",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "FSLR",
+        "index": "SPY",
+        "predicted_return": 0.05564,
+        "direction": "up",
+        "direction_probability": 63.0,
+        "last_close": 263.54,
+        "limit_sell": 272.78,
+        "timestamp": "2025-12-01T20:32:37.147930"
+      },
+      {
+        "ticker": "GOOGL",
+        "index": "SPY",
+        "predicted_return": 0.05397,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 314.89,
+        "limit_sell": 326.02,
+        "timestamp": "2025-12-01T20:32:37.147950"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "GOOGL",
+        "index": "NASDAQ",
+        "predicted_return": 0.05471,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 314.89,
+        "limit_sell": 326.17,
+        "timestamp": "2025-12-01T20:32:37.147957"
+      },
+      {
+        "ticker": "AAPL",
+        "index": "NASDAQ",
+        "predicted_return": 0.03412,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 283.1,
+        "limit_sell": 288.94,
+        "timestamp": "2025-12-01T20:32:37.147961"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "CIEN",
+        "index": "SP400",
+        "predicted_return": 0.0727,
+        "direction": "up",
+        "direction_probability": 61.0,
+        "last_close": 200.92,
+        "limit_sell": 209.83,
+        "timestamp": "2025-12-01T20:32:37.147966"
+      },
+      {
+        "ticker": "LITE",
+        "index": "SP400",
+        "predicted_return": 0.07105,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 317.93,
+        "limit_sell": 331.14,
+        "timestamp": "2025-12-01T20:32:37.147971"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "FTRE",
+        "index": "SPSM",
+        "predicted_return": 0.10863,
+        "direction": "up",
+        "direction_probability": 60.0,
+        "last_close": 12.44,
+        "limit_sell": 13.25,
+        "timestamp": "2025-12-01T20:32:37.147975"
+      },
+      {
+        "ticker": "HL",
+        "index": "SPSM",
+        "predicted_return": 0.10575,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 17.1,
+        "limit_sell": 18.21,
+        "timestamp": "2025-12-01T20:32:37.147979"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "FTRE",
+      "index": "SPSM",
+      "predicted_return": 0.10863,
+      "direction": "up",
+      "direction_probability": 60.0,
+      "last_close": 12.44,
+      "limit_sell": 13.25,
+      "timestamp": "2025-12-01T20:32:37.147975"
+    },
+    {
+      "ticker": "HL",
+      "index": "SPSM",
+      "predicted_return": 0.10575,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 17.1,
+      "limit_sell": 18.21,
+      "timestamp": "2025-12-01T20:32:37.147979"
+    },
+    {
+      "ticker": "CIEN",
+      "index": "SP400",
+      "predicted_return": 0.0727,
+      "direction": "up",
+      "direction_probability": 61.0,
+      "last_close": 200.92,
+      "limit_sell": 209.83,
+      "timestamp": "2025-12-01T20:32:37.147966"
+    },
+    {
+      "ticker": "LITE",
+      "index": "SP400",
+      "predicted_return": 0.07105,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 317.93,
+      "limit_sell": 331.14,
+      "timestamp": "2025-12-01T20:32:37.147971"
+    },
+    {
+      "ticker": "FSLR",
+      "index": "SPY",
+      "predicted_return": 0.05564,
+      "direction": "up",
+      "direction_probability": 63.0,
+      "last_close": 263.54,
+      "limit_sell": 272.78,
+      "timestamp": "2025-12-01T20:32:37.147930"
+    },
+    {
+      "ticker": "GOOGL",
+      "index": "NASDAQ",
+      "predicted_return": 0.05471,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 314.89,
+      "limit_sell": 326.17,
+      "timestamp": "2025-12-01T20:32:37.147957"
+    },
+    {
+      "ticker": "GOOGL",
+      "index": "SPY",
+      "predicted_return": 0.05397,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 314.89,
+      "limit_sell": 326.02,
+      "timestamp": "2025-12-01T20:32:37.147950"
+    },
+    {
+      "ticker": "AAPL",
+      "index": "NASDAQ",
+      "predicted_return": 0.03412,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 283.1,
+      "limit_sell": 288.94,
+      "timestamp": "2025-12-01T20:32:37.147961"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 6.96,
+    "best_signal": "FTRE",
+    "best_return": 0.10863
+  }
+}

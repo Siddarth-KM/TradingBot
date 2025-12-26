@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-02T15:08:53.868991",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "SPSM": [
+      {
+        "ticker": "MNRO",
+        "index": "SPSM",
+        "predicted_return": 0.10859,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 14.65,
+        "limit_sell": 15.69,
+        "timestamp": "2025-11-02T15:08:53.868927"
+      },
+      {
+        "ticker": "NEO",
+        "index": "SPSM",
+        "predicted_return": 0.10492,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 9.77,
+        "limit_sell": 10.39,
+        "timestamp": "2025-11-02T15:08:53.868947"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "MNRO",
+      "index": "SPSM",
+      "predicted_return": 0.10859,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 14.65,
+      "limit_sell": 15.69,
+      "timestamp": "2025-11-02T15:08:53.868927"
+    },
+    {
+      "ticker": "NEO",
+      "index": "SPSM",
+      "predicted_return": 0.10492,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 9.77,
+      "limit_sell": 10.39,
+      "timestamp": "2025-11-02T15:08:53.868947"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPSM": 2
+    },
+    "avg_predicted_return": 10.68,
+    "best_signal": "MNRO",
+    "best_return": 0.10859
+  }
+}

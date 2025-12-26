@@ -1,0 +1,62 @@
+{
+  "timestamp": "2025-11-10T20:13:41.995153",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "INTC",
+        "index": "NASDAQ",
+        "predicted_return": 0.11118,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 38.45,
+        "limit_sell": 40.95,
+        "timestamp": "2025-11-10T20:13:41.995058"
+      },
+      {
+        "ticker": "QCOM",
+        "index": "NASDAQ",
+        "predicted_return": 0.06815,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 171.57,
+        "limit_sell": 178.53,
+        "timestamp": "2025-11-10T20:13:41.995090"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "INTC",
+      "index": "NASDAQ",
+      "predicted_return": 0.11118,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 38.45,
+      "limit_sell": 40.95,
+      "timestamp": "2025-11-10T20:13:41.995058"
+    },
+    {
+      "ticker": "QCOM",
+      "index": "NASDAQ",
+      "predicted_return": 0.06815,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 171.57,
+      "limit_sell": 178.53,
+      "timestamp": "2025-11-10T20:13:41.995090"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 8.97,
+    "best_signal": "INTC",
+    "best_return": 0.11118
+  }
+}
