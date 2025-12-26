@@ -88,7 +88,7 @@ MARKET_SYMBOLS = ['SPY', 'VIX', 'DXY', 'TLT', 'GLD', 'QQQ']
 
 # Sentiment Analysis Constants
 SENTIMENT_CONFIG = {
-    'ALPHA_VANTAGE_API_KEY': '4AOTSWIKBYTLSJT4',  # 🔑 Your real Alpha Vantage API key
+    'ALPHA_VANTAGE_API_KEY': os.getenv('ALPHA_VANTAGE_API_KEY', 'YOUR_ALPHA_VANTAGE_API_KEY'),
     'COMPANY_NEWS_WEIGHT': 0.5,    # Weight for company-specific news sentiment
     'SECTOR_NEWS_WEIGHT': 0.2,     # Weight for sector news sentiment  
     'MARKET_NEWS_WEIGHT': 0.3,     # New: Global market sentiment weight
