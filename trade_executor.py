@@ -47,9 +47,9 @@ SIGNALS_FILE = "signals/current_signals.json"
 
 # Scheduling Configuration
 CST_TIMEZONE = ZoneInfo("America/Chicago")
-TRADE_HOUR = 23   # 11:00 PM CST - sell all then buy new positions
+TRADE_HOUR = 8    # 8:00 AM CST - just before market open
 TRADE_MINUTE = 0
-TRADING_DAY = 0   # Monday = 0
+TRADING_DAY = 1   # Tuesday = 1
 MAX_POSITIONS = 8  # Fixed 8 positions, 1/8 of account each
 
 # Index-based stop loss percentages

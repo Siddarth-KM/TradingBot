@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-12-30T11:59:09.401832",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "SNDK",
+        "index": "SPY",
+        "predicted_return": 0.14973,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 244.25,
+        "limit_sell": 266.01,
+        "timestamp": "2025-12-30T11:59:09.401654"
+      },
+      {
+        "ticker": "EA",
+        "index": "SPY",
+        "predicted_return": 0.04675,
+        "direction": "up",
+        "direction_probability": 64.5,
+        "last_close": 204.27,
+        "limit_sell": 210.43,
+        "timestamp": "2025-12-30T11:59:09.401685"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "EA",
+        "index": "NASDAQ",
+        "predicted_return": 0.04658,
+        "direction": "up",
+        "direction_probability": 64.5,
+        "last_close": 204.27,
+        "limit_sell": 210.41,
+        "timestamp": "2025-12-30T11:59:09.401700"
+      },
+      {
+        "ticker": "LRCX",
+        "index": "NASDAQ",
+        "predicted_return": 0.03908,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 175.87,
+        "limit_sell": 180.27,
+        "timestamp": "2025-12-30T11:59:09.401714"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "CELH",
+        "index": "SP400",
+        "predicted_return": 0.08174,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 46.44,
+        "limit_sell": 48.7,
+        "timestamp": "2025-12-30T11:59:09.401728"
+      },
+      {
+        "ticker": "LITE",
+        "index": "SP400",
+        "predicted_return": 0.06916,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 372.61,
+        "limit_sell": 387.68,
+        "timestamp": "2025-12-30T11:59:09.401742"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "SMTC",
+        "index": "SPSM",
+        "predicted_return": 0.09622,
+        "direction": "up",
+        "direction_probability": 63.0,
+        "last_close": 75.76,
+        "limit_sell": 80.35,
+        "timestamp": "2025-12-30T11:59:09.401754"
+      },
+      {
+        "ticker": "BTU",
+        "index": "SPSM",
+        "predicted_return": 0.09335,
+        "direction": "up",
+        "direction_probability": 65.0,
+        "last_close": 30.44,
+        "limit_sell": 32.29,
+        "timestamp": "2025-12-30T11:59:09.401767"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "SNDK",
+      "index": "SPY",
+      "predicted_return": 0.14973,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 244.25,
+      "limit_sell": 266.01,
+      "timestamp": "2025-12-30T11:59:09.401654"
+    },
+    {
+      "ticker": "SMTC",
+      "index": "SPSM",
+      "predicted_return": 0.09622,
+      "direction": "up",
+      "direction_probability": 63.0,
+      "last_close": 75.76,
+      "limit_sell": 80.35,
+      "timestamp": "2025-12-30T11:59:09.401754"
+    },
+    {
+      "ticker": "BTU",
+      "index": "SPSM",
+      "predicted_return": 0.09335,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 30.44,
+      "limit_sell": 32.29,
+      "timestamp": "2025-12-30T11:59:09.401767"
+    },
+    {
+      "ticker": "CELH",
+      "index": "SP400",
+      "predicted_return": 0.08174,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 46.44,
+      "limit_sell": 48.7,
+      "timestamp": "2025-12-30T11:59:09.401728"
+    },
+    {
+      "ticker": "LITE",
+      "index": "SP400",
+      "predicted_return": 0.06916,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 372.61,
+      "limit_sell": 387.68,
+      "timestamp": "2025-12-30T11:59:09.401742"
+    },
+    {
+      "ticker": "EA",
+      "index": "SPY",
+      "predicted_return": 0.04675,
+      "direction": "up",
+      "direction_probability": 64.5,
+      "last_close": 204.27,
+      "limit_sell": 210.43,
+      "timestamp": "2025-12-30T11:59:09.401685"
+    },
+    {
+      "ticker": "EA",
+      "index": "NASDAQ",
+      "predicted_return": 0.04658,
+      "direction": "up",
+      "direction_probability": 64.5,
+      "last_close": 204.27,
+      "limit_sell": 210.41,
+      "timestamp": "2025-12-30T11:59:09.401700"
+    },
+    {
+      "ticker": "LRCX",
+      "index": "NASDAQ",
+      "predicted_return": 0.03908,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 175.87,
+      "limit_sell": 180.27,
+      "timestamp": "2025-12-30T11:59:09.401714"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 7.78,
+    "best_signal": "SNDK",
+    "best_return": 0.14973
+  }
+}
