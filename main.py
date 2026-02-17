@@ -9,8 +9,6 @@ import time
 import traceback
 import warnings
 import threading
-import time
-from catboost import Pool
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from threading import Lock
@@ -20,12 +18,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
-import yfinance as yf
+# Use Massive.com API instead of yfinance for reliable datacenter access
+import massive_api as yf
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from scipy import stats
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import xgboost as xgb
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor, GradientBoostingRegressor, AdaBoostRegressor
 from sklearn.linear_model import BayesianRidge, ElasticNet
@@ -37,96 +35,21 @@ from ta.momentum import RSIIndicator, WilliamsRIndicator, StochasticOscillator
 from ta.trend import MACD
 from ta.volatility import AverageTrueRange
 from catboost import CatBoostClassifier, Pool
+from bot_config import *
+from bot_utils import ensure_iterable, to_scalar, flatten_series, calc_slope, sanitize_for_json, detect_market_regime
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 # Configure environment and warnings
 matplotlib.use('Agg')  # Use non-interactive backend
 warnings.filterwarnings('ignore')
 logging.getLogger().setLevel(logging.ERROR)
-logging.getLogger("transformers").setLevel(logging.ERROR)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
-logging.getLogger("yfinance").setLevel(logging.ERROR)
-os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
-os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+logging.getLogger("massive").setLevel(logging.ERROR)
 app = Flask(__name__)
 CORS(app)
 
-# Machine Learning Constants
-MIN_DATA_POINTS = 50  # Minimum data points required for training
-MIN_FEATURES = 5  # Minimum features required for training
-MIN_CONFIDENCE_SAMPLES = 30  # Minimum samples for confidence calculations
-DEFAULT_CONFIDENCE_LEVEL = 95  # Default confidence level percentage
-DEFAULT_MARGIN_ERROR = 0.05  # Default margin of error (5%)
-TRADING_DAYS_YEAR = 252  # Number of trading days in a year
-FEATURE_ROLLING_WINDOW = 20  # Default rolling window for features
-VIX_HIGH_THRESHOLD = 25  # VIX level considered high fear
-VIX_VERY_HIGH_THRESHOLD = 30  # VIX level considered very high fear
-VIX_LOW_THRESHOLD = 15   # VIX level considered low fear
-FORWARD_FILL_LIMIT = 5   # Maximum days to forward fill missing data
-
-# Market Condition Thresholds
-SIDEWAYS_PRICE_THRESHOLD = 0.05  # Price change threshold for sideways market
-SIDEWAYS_SMA_THRESHOLD = 0.03    # SMA change threshold for sideways market
-BULL_PRICE_THRESHOLD = 0.1       # Price change threshold for bull market
-BULL_SMA_THRESHOLD = 0.05        # SMA change threshold for bull market
-BEAR_PRICE_THRESHOLD = -0.1      # Price change threshold for bear market
-BEAR_SMA_THRESHOLD = -0.05       # SMA change threshold for bear market
-HIGH_VOLATILITY_THRESHOLD = 0.03 # Volatility threshold for volatile market
-
-# Regime-based Volatility Constants
-REGIME_VOLATILITY_BULL = 0.015     # Base volatility for bull market
-REGIME_VOLATILITY_BEAR = 0.025     # Base volatility for bear market
-REGIME_VOLATILITY_SIDEWAYS = 0.02  # Base volatility for sideways market
-REGIME_VOLATILITY_VOLATILE = 0.035 # Base volatility for volatile market
-VOLATILITY_ADJUSTMENT_BASE = 0.5   # Base multiplier for volatility adjustment
-
-# Cache and Data Management Constants
-CACHE_MAX_SIZE = 50  # Maximum number of cache entries to prevent memory bloat
-CACHE_MAX_AGE_HOURS = 24  # Maximum age of cache entries in hours
-
-# Market symbols for cross-asset features
-MARKET_SYMBOLS = ['SPY', 'VIX', 'DXY', 'TLT', 'GLD', 'QQQ']
-
-# Sentiment Analysis Constants
-SENTIMENT_CONFIG = {
-    'ALPHA_VANTAGE_API_KEY': os.getenv('ALPHA_VANTAGE_API_KEY', 'YOUR_ALPHA_VANTAGE_API_KEY'),
-    'COMPANY_NEWS_WEIGHT': 0.5,    # Weight for company-specific news sentiment
-    'SECTOR_NEWS_WEIGHT': 0.2,     # Weight for sector news sentiment  
-    'MARKET_NEWS_WEIGHT': 0.3,     # New: Global market sentiment weight
-    'NEWS_LOOKBACK_DAYS': 7,
-    'SENTIMENT_CACHE_HOURS': 1,
-    'MARKET_SENTIMENT_CACHE_HOURS': 24,  # Market sentiment cached for 24 hours
-    'SENTIMENT_ADJUSTMENT_MAX': 0.25,
-    'API_REQUEST_INTERVAL': 0.25  # 250ms between requests (4 req/sec)
-}
-
-# Sector mapping for consistent news searches
-SECTOR_MAPPING = {
-    'Technology': ['technology', 'tech stocks', 'software', 'hardware', 'semiconductors'],
-    'Healthcare': ['healthcare', 'pharmaceuticals', 'biotech', 'medical devices'],
-    'Financial Services': ['banking', 'finance', 'financial services', 'fintech', 'banks'],
-    'Consumer Cyclical': ['consumer cyclical', 'retail', 'e-commerce', 'consumer discretionary'],
-    'Communication Services': ['communication services', 'telecom', 'media', 'entertainment'],
-    'Industrials': ['industrial stocks', 'manufacturing', 'aerospace', 'defense'],
-    'Consumer Defensive': ['consumer staples', 'consumer defensive', 'food', 'beverages'],
-    'Energy': ['energy stocks', 'oil', 'gas', 'renewable energy'],
-    'Basic Materials': ['basic materials', 'chemicals', 'mining', 'metals'],
-    'Utilities': ['utility stocks', 'utilities', 'electric', 'water', 'gas utilities'],
-    'Real Estate': ['real estate', 'reits', 'property']
-}
-
-# Global market sentiment search terms (major market ETFs and indices as proxies)
-MARKET_SENTIMENT_TERMS = [
-    'SPY',    
-    'QQQ',    
-    'DIA',    
-    'IWM',    
-    'VIX',    # Volatility Index
-    'TLT'     # Treasury ETF (flight to safety indicator)
-]
-# Global sentiment model
-SENTIMENT_MODEL = None
-SENTIMENT_TOKENIZER = None
-SENTIMENT_PIPELINE = None
+# All ML constants, thresholds, cache settings, market symbols, sentiment config,
+# index URLs, and ETF tickers are imported from bot_config via `from bot_config import *`.
+# Do NOT redefine them here — single source of truth is bot_config.py.
 
 # Sentiment cache with lock for thread safety
 SENTIMENT_CACHE = {}
@@ -136,75 +59,6 @@ SENTIMENT_CACHE_LOCK = Lock()
 MARKET_SENTIMENT_CACHE = None
 MARKET_SENTIMENT_TIMESTAMP = None
 MARKET_SENTIMENT_LOCK = Lock()
-
-# Track API requests to prevent rate limit issues
-LAST_NEWS_API_CALL = None
-
-# List of supported index names
-SUPPORTED_INDEXES = ['SPY', 'NASDAQ', 'SP400', 'SPSM']
-
-def is_index_ticker(ticker):
-    """Check if a ticker is one of our supported indexes"""
-    return ticker.upper() in SUPPORTED_INDEXES
-
-def ensure_iterable(obj):
-    """Ensure the object is iterable. If not, wrap it in a list."""
-    if isinstance(obj, (list, np.ndarray, pd.Series)):
-        return obj
-    return [obj]
-
-def initialize_sentiment_model():
-    global SENTIMENT_MODEL, SENTIMENT_TOKENIZER, SENTIMENT_PIPELINE
-    
-    try:
-        # print("Loading sentiment model...")
-        # Suppress progress bars and verbose output
-        logging.getLogger("transformers").setLevel(logging.ERROR)
-        logging.getLogger("urllib3").setLevel(logging.ERROR)
-        
-        # Set environment variable to suppress download progress
-        os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
-        os.environ["TRANSFORMERS_VERBOSITY"] = "error"
-        
-        SENTIMENT_MODEL = AutoModelForSequenceClassification.from_pretrained(
-            "ProsusAI/finbert",
-            local_files_only=False,
-            trust_remote_code=False
-        )
-        SENTIMENT_TOKENIZER = AutoTokenizer.from_pretrained(
-            "ProsusAI/finbert",
-            local_files_only=False,
-            trust_remote_code=False
-        )
-        
-        # Create pipeline for easier sentiment prediction
-        SENTIMENT_PIPELINE = pipeline(
-            "text-classification", 
-            model=SENTIMENT_MODEL, 
-            tokenizer=SENTIMENT_TOKENIZER,
-            device=-1  # Force CPU to avoid CUDA warnings
-        )
-        
-        return True
-    except Exception as e:
-        # print(f"⚠️ Sentiment model failed to load, using fallback methods")
-        SENTIMENT_PIPELINE = None
-        return False
-
-def sanitize_for_json(obj):
-    """Recursively replace NaN and inf values with None for JSON serialization."""
-    if isinstance(obj, dict):
-        return {k: sanitize_for_json(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [sanitize_for_json(item) for item in obj]
-    elif isinstance(obj, (float, np.floating)):
-        if np.isnan(obj) or np.isinf(obj):
-            return None
-        return float(obj)
-    elif isinstance(obj, (int, np.integer)):
-        return int(obj)
-    else:
-        return obj
 
 def get_cached_sentiment(ticker):
     """Get cached sentiment data if available and not expired"""
@@ -234,243 +88,8 @@ def cache_sentiment(ticker, sentiment_data):
             for k, v in sorted_items[:80]:
                 SENTIMENT_CACHE[k] = v
 
-def get_ticker_sector(ticker):
-    """Get sector for a ticker from Yahoo Finance"""
-    try:
-        # Create yfinance ticker object
-        ticker_obj = yf.Ticker(ticker)
-        info = ticker_obj.info
-        
-        # Try to get sector from info
-        sector = info.get('sector', '')
-        if sector:
-            return sector
-            
-        # If no sector, try to get from industry
-        industry = info.get('industry', '')
-        if industry:
-            # Map common industries to sectors
-            industry_lower = industry.lower()
-            if 'bank' in industry_lower or 'financial' in industry_lower:
-                return 'Financial Services'
-            elif 'tech' in industry_lower or 'software' in industry_lower:
-                return 'Technology'
-            elif 'health' in industry_lower or 'pharma' in industry_lower or 'bio' in industry_lower:
-                return 'Healthcare'
-            elif 'oil' in industry_lower or 'gas' in industry_lower or 'energy' in industry_lower:
-                return 'Energy'
-        
-        return 'Unknown'
-        
-    except Exception as e:
-        # print(f"Error getting sector for {ticker}: {e}")
-        return 'Unknown'
-
-def get_alpha_vantage_news(query, limit=20, is_ticker=True):
-    """Get news from Alpha Vantage News API with improved error handling"""
-    global LAST_NEWS_API_CALL
-    
-    # Rate limiting - ensure at least 12 seconds between calls
-    current_time = time.time()
-    if LAST_NEWS_API_CALL is not None:
-        time_since_last = current_time - LAST_NEWS_API_CALL
-        if time_since_last < 12:  # 300 calls/day = ~12 seconds apart
-            time.sleep(12 - time_since_last)
-    
-    LAST_NEWS_API_CALL = time.time()
-    
-    try:
-        url = "https://www.alphavantage.co/query"
-        
-        # Use different parameters for tickers vs general topics
-        if is_ticker:
-            params = {
-                'function': 'NEWS_SENTIMENT',
-                'tickers': query,
-                'apikey': SENTIMENT_CONFIG['ALPHA_VANTAGE_API_KEY'],
-                'limit': min(limit, 50),  # API limit
-                'sort': 'LATEST'
-            }
-        else:
-            # For general terms, try keywords parameter
-            params = {
-                'function': 'NEWS_SENTIMENT',
-                'keywords': query,
-                'apikey': SENTIMENT_CONFIG['ALPHA_VANTAGE_API_KEY'],
-                'limit': min(limit, 50),
-                'sort': 'LATEST'
-            }
-        
-        response = requests.get(url, params=params, timeout=10)
-        response.raise_for_status()
-        
-        data = response.json()
-        
-        # Check for API error or information messages (less verbose)
-        if 'Error Message' in data:
-            # print(f"⚠️ Alpha Vantage API Error for {query}")
-            return []
-        
-        if 'Note' in data:
-            # print(f"⚠️ Alpha Vantage API rate limit reached")
-            return []
-            
-        if 'Information' in data:
-            # API key issue or invalid input - fail silently and use fallback
-            return []
-        
-        # Extract articles
-        articles = data.get('feed', [])
-        
-        # Filter and format articles (only show count if successful)
-        filtered_articles = []
-        for article in articles:
-            try:
-                # Parse time
-                time_published = article.get('time_published', '')
-                if len(time_published) >= 8:
-                    # Format: YYYYMMDDTHHMMSS
-                    pub_datetime = datetime.strptime(time_published[:8], '%Y%m%d')
-                    
-                    # Only include articles from last 7 days
-                    days_old = (datetime.now() - pub_datetime).days
-                    if days_old > 7:
-                        continue
-                    
-                    filtered_articles.append({
-                        'title': article.get('title', ''),
-                        'summary': article.get('summary', ''),
-                        'source': article.get('source', ''),
-                        'time_published': time_published,
-                        'days_old': days_old,
-                        'overall_sentiment_score': float(article.get('overall_sentiment_score', 0)),
-                        'overall_sentiment_label': article.get('overall_sentiment_label', 'Neutral')
-                    })
-                    
-            except Exception as e:
-                # Silently skip malformed articles
-                continue
-        
-        # Only show success message if we got articles
-        if filtered_articles:
-            pass  # print(f"📰 Retrieved {len(filtered_articles)} articles for {query}")
-        
-        return filtered_articles
-        
-    except Exception as e:
-        # Silently fail and return empty list for fallback
-        return []
-
-def analyze_sentiment_with_finbert(text):
-    """Analyze sentiment using FinBERT model or fallback methods"""
-    global SENTIMENT_PIPELINE
-    
-    # Try FinBERT first if available
-    if SENTIMENT_PIPELINE is not None:
-        try:
-            # Clean and truncate text
-            text = re.sub(r'[^\w\s\.\,\!\?]', ' ', text)
-            text = ' '.join(text.split())  # Remove extra whitespace
-            
-            # Truncate to reasonable length for model
-            if len(text) > 500:
-                text = text[:500]
-            
-            if not text.strip():
-                return 0.0
-            
-            # Get sentiment prediction
-            result = SENTIMENT_PIPELINE(text)
-            
-            # Convert to numerical score (0 to +100)
-            label = result[0]['label'].lower()
-            score = result[0]['score']
-            
-            if 'positive' in label:
-                return score * 100
-            elif 'negative' in label:
-                return -score * 100
-            else:  # neutral
-                return 0.0
-                
-        except Exception as e:
-            pass  # print(f"Error with FinBERT, falling back to rule-based: {e}")
-    
-    # Fallback to rule-based sentiment analysis
-    return analyze_sentiment_rule_based(text)
-
-def analyze_sentiment_rule_based(text):
-    """Simple rule-based sentiment analysis as fallback"""
-    if not text or not text.strip():
-        return 0.0
-    
-    text = text.lower()
-    
-    # Financial positive keywords
-    positive_words = {
-        'bullish', 'bull', 'rally', 'surge', 'soar', 'gain', 'gains', 'up', 'rise', 'rising', 'increased', 
-        'growth', 'profit', 'profits', 'strong', 'beat', 'beats', 'exceeded', 'outperform', 'optimistic',
-        'positive', 'upgrade', 'upgraded', 'buy', 'buying', 'momentum', 'breakthrough', 'record high',
-        'expansion', 'recovering', 'recovery', 'boosted', 'improved', 'stellar', 'robust', 'solid'
-    }
-    
-    # Financial negative keywords  
-    negative_words = {
-        'bearish', 'bear', 'crash', 'plunge', 'fall', 'falling', 'dropped', 'decline', 'declining', 'loss',
-        'losses', 'weak', 'weakness', 'miss', 'missed', 'underperform', 'pessimistic', 'negative', 'concern',
-        'concerns', 'worried', 'fear', 'fears', 'downgrade', 'downgraded', 'sell', 'selling', 'pressure',
-        'recession', 'crisis', 'volatile', 'volatility', 'risk', 'risks', 'uncertain', 'uncertainty',
-        'disappointing', 'struggled', 'struggling', 'challenges', 'headwinds', 'tariff', 'tariffs'
-    }
-    
-    # Count sentiment words
-    words = text.split()
-    positive_count = sum(1 for word in words if word in positive_words)
-    negative_count = sum(1 for word in words if word in negative_words)
-    
-    # Calculate sentiment score
-    total_words = len(words)
-    if total_words == 0:
-        return 0.0
-    
-    positive_ratio = positive_count / total_words
-    negative_ratio = negative_count / total_words
-    
-    # Net sentiment (-100 to +100)
-    net_sentiment = (positive_ratio - negative_ratio) * 100
-    
-    # Apply some scaling to match FinBERT-like outputs
-    sentiment_score = max(-100, min(100, net_sentiment * 50))  # Scale to reasonable range
-    
-    return sentiment_score
-
-def calculate_time_decay_weight(days_old):
-    """Calculate time decay weight for news articles"""
-    # Linear decay from 1.0 (today) to 0.1 (7 days old)
-    if days_old <= 0:
-        return 1.0
-    elif days_old >= 7:
-        return 0.1
-    else:
-        return 1.0 - (days_old * 0.9 / 7.0)
-
-def get_weekend_adjusted_days(pub_datetime):
-    """Adjust days calculation for weekend news carrying into Monday"""
-    current_datetime = datetime.now()
-    
-    # If today is Monday and article is from weekend, treat as today
-    if current_datetime.weekday() == 0:  # Monday
-        if pub_datetime.weekday() in [5, 6]:  # Saturday or Sunday
-            # Weekend news carries into Monday
-            weekend_diff = current_datetime.date() - pub_datetime.date()
-            if weekend_diff.days <= 2:  # Same weekend
-                return 0
-    
-    # Normal day calculation
-    return (current_datetime.date() - pub_datetime.date()).days
-
 def get_market_sentiment():
-    """Get global market sentiment (cached for 24 hours)"""
+    """Get global market sentiment using price-based analysis (cached for 24 hours)"""
     global MARKET_SENTIMENT_CACHE, MARKET_SENTIMENT_TIMESTAMP
     
     with MARKET_SENTIMENT_LOCK:
@@ -482,83 +101,8 @@ def get_market_sentiment():
             if cache_age_hours < SENTIMENT_CONFIG['MARKET_SENTIMENT_CACHE_HOURS']:
                 return MARKET_SENTIMENT_CACHE
         
-        # Need to fetch new market sentiment
-        # print("📰 Fetching market sentiment...")
-        
-        market_sentiment = 0.0
-        market_weight_sum = 0.0
-        article_count = 0
-        api_failures = 0
-        
-        # Search multiple market terms (using major ETFs as market proxies)
-        for term in MARKET_SENTIMENT_TERMS[:3]:  # Limit to 3 terms to reduce API calls
-            try:
-                # These are ETF symbols, so use as tickers
-                articles = get_alpha_vantage_news(term, limit=5, is_ticker=True)
-                
-                if not articles:
-                    api_failures += 1
-                    # If first few API calls fail, immediately use fallback
-                    if api_failures >= 2:
-                        # print("📰 API calls failing, using fallback market sentiment...")
-                        break
-                    continue
-                
-                for article in articles:
-                    try:
-                        # Parse publication date
-                        time_published = article['time_published']
-                        if len(time_published) >= 8:
-                            pub_datetime = datetime.strptime(time_published[:8], '%Y%m%d')
-                            days_old = get_weekend_adjusted_days(pub_datetime)
-                            
-                            # Include articles from last 3 days for market sentiment
-                            if days_old > 3:
-                                continue
-                            
-                            # Calculate time decay weight
-                            time_weight = calculate_time_decay_weight(days_old)
-                            
-                            # Analyze sentiment - prefer Alpha Vantage scores, fallback to text analysis
-                            alpha_vantage_sentiment = article.get('overall_sentiment_score', 0)
-                            if alpha_vantage_sentiment != 0:
-                                # Use Alpha Vantage sentiment (scale from -1 to 1 range to -100 to 100)
-                                sentiment = alpha_vantage_sentiment * 100
-                            else:
-                                # Fallback to text analysis
-                                text = f"{article['title']} {article['summary']}"
-                                sentiment = analyze_sentiment_with_finbert(text)
-                            
-                            # Weight by time decay and relevance
-                            weighted_sentiment = sentiment * time_weight
-                            market_sentiment += weighted_sentiment
-                            market_weight_sum += time_weight
-                            article_count += 1
-                            
-                    except Exception as e:
-                        # Silently skip malformed articles
-                        continue
-                        
-                # Reduce delay between term searches
-                if article_count < 5:  # Only add delay if we're still searching
-                    time.sleep(0.5)
-                
-            except Exception as e:
-                api_failures += 1
-                # Skip failed searches silently
-                continue
-        
-        # If no articles found or API failures, use fallback approach immediately
-        if article_count == 0 or api_failures >= 2:
-            market_sentiment = get_fallback_market_sentiment()
-            article_count = 1  # Prevent division by zero
-            market_weight_sum = 1.0
-        
-        # Calculate final market sentiment
-        if market_weight_sum > 0:
-            final_market_sentiment = market_sentiment / market_weight_sum
-        else:
-            final_market_sentiment = market_sentiment
+        # Use price-based market sentiment (no external news API needed)
+        final_market_sentiment = get_fallback_market_sentiment()
         
         # Ensure sentiment is in range [-100, 100]
         final_market_sentiment = max(-100, min(100, final_market_sentiment))
@@ -566,11 +110,6 @@ def get_market_sentiment():
         # Cache the result
         MARKET_SENTIMENT_CACHE = final_market_sentiment
         MARKET_SENTIMENT_TIMESTAMP = time.time()
-        
-        if article_count > 1:
-            pass  # print(f"✅ Market sentiment: {final_market_sentiment:.1f}/100 (from {article_count} articles)")
-        else:
-            pass  # print(f"✅ Market sentiment: {final_market_sentiment:.1f}/100 (fallback)")
             
         return final_market_sentiment
 
@@ -775,199 +314,33 @@ def get_index_sentiment_score(index_name):
         }
 
 def get_sentiment_score(ticker):
-    """Get comprehensive sentiment score for a ticker"""
+    """Get sentiment score for a ticker using price-based market sentiment"""
     try:
         # Check cache first
         cached_data = get_cached_sentiment(ticker)
         if cached_data:
             return cached_data
         
-        # print(f"Fetching sentiment for {ticker}")
-        
-        # Get global market sentiment (cached for 24 hours)
+        # Get global market sentiment (cached for 24 hours, price-based)
         market_sentiment = get_market_sentiment()
         
-        # Get company news (50% weight)
-        company_news = get_alpha_vantage_news(ticker, limit=15, is_ticker=True)
+        # Use 100% market sentiment (no news API calls)
+        final_sentiment = max(-100, min(100, market_sentiment))
         
-        # Get sector and sector news (20% weight)
-        sector = get_ticker_sector(ticker)
-        sector_search_terms = SECTOR_MAPPING.get(sector, [sector])
-        
-        sector_news = []
-        for term in sector_search_terms[:2]:  # Limit to 2 search terms
-            sector_articles = get_alpha_vantage_news(term, limit=8, is_ticker=False)
-            sector_news.extend(sector_articles)
-        
-        # Remove duplicates from sector news
-        seen_titles = set()
-        unique_sector_news = []
-        for article in sector_news:
-            title_key = article['title'].lower()[:50]  # Use first 50 chars as key
-            if title_key not in seen_titles:
-                seen_titles.add(title_key)
-                unique_sector_news.append(article)
-        
-        # Calculate company sentiment
-        company_sentiment = 0.0
-        company_weight_sum = 0.0
-        
-        for article in company_news:
-            try:
-                # Parse publication date
-                time_published = article['time_published']
-                if len(time_published) >= 8:
-                    pub_datetime = datetime.strptime(time_published[:8], '%Y%m%d')
-                    days_old = get_weekend_adjusted_days(pub_datetime)
-                    
-                    # Skip if too old
-                    if days_old > 7:
-                        continue
-                    
-                    # Calculate time decay weight
-                    time_weight = calculate_time_decay_weight(days_old)
-                    
-                    # Analyze sentiment - prefer Alpha Vantage scores, fallback to text analysis
-                    alpha_vantage_sentiment = article.get('overall_sentiment_score', 0)
-                    if alpha_vantage_sentiment != 0:
-                        # Use Alpha Vantage sentiment (scale from -1 to 1 range to -100 to 100)
-                        sentiment = alpha_vantage_sentiment * 100
-                        # print(f"[get_sentiment_score] {ticker} Company Article: '{article['title'][:50]}...' | AV Score: {alpha_vantage_sentiment:.3f} → {sentiment:.1f}/100")
-                    else:
-                        # Fallback to text analysis
-                        text = f"{article['title']} {article['summary']}"
-                        sentiment = analyze_sentiment_with_finbert(text)
-                        # print(f"[get_sentiment_score] {ticker} Company Article: '{article['title'][:50]}...' | FinBERT Score: {sentiment:.1f}/100")
-                    
-                    # Weight by time decay
-                    weighted_sentiment = sentiment * time_weight
-                    company_sentiment += weighted_sentiment
-                    company_weight_sum += time_weight
-                    
-            except Exception as e:
-                pass  # print(f"Error processing company article: {e}")
-                continue
-        
-        # Calculate sector sentiment
-        sector_sentiment = 0.0
-        sector_weight_sum = 0.0
-        
-        for article in unique_sector_news:
-            try:
-                # Parse publication date
-                time_published = article['time_published']
-                if len(time_published) >= 8:
-                    pub_datetime = datetime.strptime(time_published[:8], '%Y%m%d')
-                    days_old = get_weekend_adjusted_days(pub_datetime)
-                    
-                    # Skip if too old
-                    if days_old > 7:
-                        continue
-                    
-                    # Calculate time decay weight
-                    time_weight = calculate_time_decay_weight(days_old)
-                    
-                    # Analyze sentiment - prefer Alpha Vantage scores, fallback to text analysis
-                    alpha_vantage_sentiment = article.get('overall_sentiment_score', 0)
-                    if alpha_vantage_sentiment != 0:
-                        # Use Alpha Vantage sentiment (scale from -1 to 1 range to -100 to 100)
-                        sentiment = alpha_vantage_sentiment * 100
-                        # print(f"[get_sentiment_score] {ticker} Sector Article: '{article['title'][:50]}...' | AV Score: {alpha_vantage_sentiment:.3f} → {sentiment:.1f}/100")
-                    else:
-                        # Fallback to text analysis
-                        text = f"{article['title']} {article['summary']}"
-                        sentiment = analyze_sentiment_with_finbert(text)
-                        # print(f"[get_sentiment_score] {ticker} Sector Article: '{article['title'][:50]}...' | FinBERT Score: {sentiment:.1f}/100")
-                    
-                    # Weight by time decay
-                    weighted_sentiment = sentiment * time_weight
-                    sector_sentiment += weighted_sentiment
-                    sector_weight_sum += time_weight
-                    
-            except Exception as e:
-                pass  # print(f"Error processing sector article: {e}")
-                continue
-        
-        # Calculate final weighted sentiment with dynamic weighting
-        # Redistribute weights when news categories are missing
-        final_sentiment = 0.0
-        
-        # Determine which news sources have data
-        has_company = company_weight_sum > 0
-        has_sector = sector_weight_sum > 0
-        has_market = True  # Market sentiment is always available
-        
-        # Calculate dynamic weights based on available data
-        company_weight = SENTIMENT_CONFIG['COMPANY_NEWS_WEIGHT'] if has_company else 0
-        sector_weight = SENTIMENT_CONFIG['SECTOR_NEWS_WEIGHT'] if has_sector else 0
-        market_weight = SENTIMENT_CONFIG['MARKET_NEWS_WEIGHT']
-        
-        # Redistribute missing weights - give ALL missing weight to available sources
-        if not has_company and not has_sector:
-            # No company or sector news - market gets 100% weight
-            market_weight = 1.0
-            company_weight = 0
-            sector_weight = 0
-        elif not has_company:
-            # No company news - redistribute company weight between sector and market
-            missing_company_weight = SENTIMENT_CONFIG['COMPANY_NEWS_WEIGHT']
-            # Give it all to market since sector already has its own weight
-            market_weight += missing_company_weight
-            company_weight = 0
-        elif not has_sector:
-            # No sector news - redistribute sector weight between company and market  
-            missing_sector_weight = SENTIMENT_CONFIG['SECTOR_NEWS_WEIGHT']
-            # Give it all to market since company already has its own weight
-            market_weight += missing_sector_weight
-            sector_weight = 0
-        # If we have all news sources, weights stay as configured
-        
-        # Apply weighted sentiment calculation
-        if has_company:
-            company_avg = company_sentiment / company_weight_sum
-            final_sentiment += company_avg * company_weight
-        
-        if has_sector:
-            sector_avg = sector_sentiment / sector_weight_sum
-            final_sentiment += sector_avg * sector_weight
-        
-        # Market sentiment (dynamically weighted)
-        final_sentiment += market_sentiment * market_weight
-        
-        # Debug logging for weight verification
-        total_weight = (company_weight if has_company else 0) + (sector_weight if has_sector else 0) + market_weight
-        # print(f"[get_sentiment_score] {ticker} - Dynamic weights:")
-        # print(f"  Company: {company_weight:.3f} ({'✓' if has_company else '✗'})")
-        # print(f"  Sector: {sector_weight:.3f} ({'✓' if has_sector else '✗'})")
-        # print(f"  Market: {market_weight:.3f} (always available)")
-        # print(f"  Total weight: {total_weight:.3f} (should be ~1.0)")
-        # print(f"  Market sentiment value: {market_sentiment:.1f}/100")
-        # print(f"  Final sentiment: {final_sentiment:.1f}/100")
-        
-        # Ensure sentiment is in range [-100, 100]
-        final_sentiment = max(-100, min(100, final_sentiment))
-        
-        # Calculate average sentiment scores for display
-        company_avg_sentiment = (company_sentiment / company_weight_sum) if company_weight_sum > 0 else 0.0
-        sector_avg_sentiment = (sector_sentiment / sector_weight_sum) if sector_weight_sum > 0 else 0.0
-        
-        # Create result data with dynamic weights
         result = {
             'sentiment_score': final_sentiment,
-            'company_articles': len(company_news),
-            'sector_articles': len(unique_sector_news),
+            'company_articles': 0,
+            'sector_articles': 0,
             'market_sentiment': market_sentiment,
-            'sector': sector,
+            'sector': 'Market',
             'timestamp': time.time(),
-            # Include the dynamic weights that were actually used
-            'dynamic_company_weight': company_weight if has_company else 0,
-            'dynamic_sector_weight': sector_weight if has_sector else 0,
-            'dynamic_market_weight': market_weight,
-            'has_company_news': has_company,
-            'has_sector_news': has_sector,
-            # Add the actual sentiment scores (not just article counts)
-            'company_sentiment_score': company_avg_sentiment,
-            'sector_sentiment_score': sector_avg_sentiment
+            'dynamic_company_weight': 0,
+            'dynamic_sector_weight': 0,
+            'dynamic_market_weight': 1.0,
+            'has_company_news': False,
+            'has_sector_news': False,
+            'company_sentiment_score': 0.0,
+            'sector_sentiment_score': 0.0
         }
         
         # Cache the result
@@ -976,7 +349,6 @@ def get_sentiment_score(ticker):
         return result
         
     except Exception as e:
-        pass  # print(f"Error getting sentiment for {ticker}: {e}")
         return {
             'sentiment_score': 0.0,
             'company_articles': 0,
@@ -986,10 +358,7 @@ def get_sentiment_score(ticker):
             'timestamp': time.time()
         }
 
-# Configuration
-CACHE_DURATION = 24 * 60 * 60  # 24 hours in seconds
-THREAD_POOL_SIZE = 10
-CACHE_DIR = 'cache'
+# Cache directory setup (CACHE_DIR, CACHE_DURATION, THREAD_POOL_SIZE from bot_config)
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 # Thread-safe cache
@@ -1059,20 +428,7 @@ def clear_stale_cache():
     except Exception as e:
         pass  # print(f"[clear_stale_cache] Error during cache cleanup: {e}")
 
-# Index Wikipedia URLs
-INDEX_URLS = {
-    'SPY': 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies',
-    'NASDAQ': 'https://en.wikipedia.org/wiki/Nasdaq-100',
-    'SP400': 'https://en.wikipedia.org/wiki/List_of_S%26P_400_companies',
-    'SPSM': 'https://en.wikipedia.org/wiki/List_of_S%26P_600_companies'
-}
-
-INDEX_ETF_TICKERS = {
-    'NASDAQ': 'QQQ',
-    'SPY': 'SPY',
-    'SP400': 'MDY',
-    'SPSM': 'SPSM',
-}
+# INDEX_URLS and INDEX_ETF_TICKERS imported from bot_config
 
 def get_cached_data(cache_key):
     """Get data from cache if it exists and is not expired"""
@@ -1144,19 +500,6 @@ def scrape_index_constituents(index_name, force_refresh=False):
         # print(f"[scrape_wikipedia_table] Error: {e}")
             return []
 
-    # FIX: Define cache_key before any index-specific logic
-    cache_key = f"constituents_{index_name}"
-
-    # Wikipedia scraping for SPSM (S&P 600)
-    if index_name == 'SPSM':
-        url = INDEX_URLS['SPSM']
-        tickers = scrape_wikipedia_table(url, ticker_col=0)
-        if len(tickers) > 100:
-            save_to_cache(cache_key, tickers)
-            return tickers
-        fallback = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
-        save_to_cache(cache_key, fallback)
-        return fallback
     # Hardcoded QQQ (NASDAQ-100) tickers
     QQQ_TICKERS = [
         "ADBE","AMD","ABNB","GOOGL","GOOG","AMZN","AEP","AMGN","ADI","AAPL","AMAT","APP","ARM","ASML","AZN","TEAM","ADSK","ADP","AXON",
@@ -1166,33 +509,12 @@ def scrape_index_constituents(index_name, force_refresh=False):
         "PLTR","PYPL","QCOM","REGN","ROP","ROST","SHOP","SBUX","SNPS","TMUS","TTD","TTWO","TSLA","TXN","VRSK","VRTX","WBD","WDAY","XEL","ZS"
     ]
 
-    def scrape_wikipedia_table(url, ticker_col=0):
-
-        try:
-            headers = {"User-Agent": "Mozilla/5.0"}
-            resp = requests.get(url, headers=headers, timeout=10)
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "html.parser")
-            table = soup.find("table", {"class": "wikitable"})
-            tickers = []
-            if table:
-                for row in table.find_all("tr")[1:]:
-                    cells = row.find_all("td")
-                    if len(cells) > ticker_col:
-                        ticker = cells[ticker_col].get_text(strip=True).replace(".", "-")
-                        if 1 <= len(ticker) <= 6 and ticker.isupper():
-                            tickers.append(ticker)
-            return tickers
-        except Exception as e:
-        # print(f"[scrape_wikipedia_table] Error: {e}")
-            return []
-
+    # Cache check BEFORE any scraping (applies to ALL indexes including SPSM)
     cache_key = f"constituents_{index_name}"
     if not force_refresh:
         cached_data = get_cached_data(cache_key)
         if cached_data:
             return cached_data
-
 
     # Hardcoded QQQ
     if index_name == 'NASDAQ':
@@ -1215,6 +537,17 @@ def scrape_index_constituents(index_name, force_refresh=False):
         url = INDEX_URLS['SP400']
         tickers = scrape_wikipedia_table(url, ticker_col=0)
         if len(tickers) > 50:
+            save_to_cache(cache_key, tickers)
+            return tickers
+        fallback = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+        save_to_cache(cache_key, fallback)
+        return fallback
+
+    # Wikipedia scraping for SPSM (S&P 600)
+    if index_name == 'SPSM':
+        url = INDEX_URLS['SPSM']
+        tickers = scrape_wikipedia_table(url, ticker_col=0)
+        if len(tickers) > 100:
             save_to_cache(cache_key, tickers)
             return tickers
         fallback = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
@@ -1278,7 +611,22 @@ def download_market_data_cache(start_date, force_refresh=False):
     # print(f"[download_market_data_cache] Successfully cached {len(market_data_cache)} market symbols")
     return market_data_cache
 
-def download_index_data(index_name, start_date, force_refresh=False):
+def download_index_data(index_name, start_date, force_refresh=False, shared_stock_cache=None):
+    """
+    Download OHLCV data for all tickers in an index.
+    
+    Args:
+        index_name: Index identifier (SPY, NASDAQ, SP400, SPSM)
+        start_date: Historical data start date
+        force_refresh: Force data re-download
+        shared_stock_cache: Optional dict of {ticker: DataFrame} already downloaded
+                           from prior index runs. Tickers present here are skipped
+                           (saving one 12s API call each). Newly downloaded tickers
+                           are added back to this dict for subsequent indexes.
+    
+    Returns:
+        Tuple of (stock_data, fallback_used, successful_downloads, failed_downloads)
+    """
     # Always force refresh for debugging
     tickers = scrape_index_constituents(index_name, force_refresh=True)
     etf_ticker = INDEX_ETF_TICKERS.get(index_name)
@@ -1286,35 +634,58 @@ def download_index_data(index_name, start_date, force_refresh=False):
         tickers.remove(etf_ticker)
     if etf_ticker:
         tickers = [etf_ticker] + tickers
-    # print(f"[download_index_data] Batch downloading data for tickers: {tickers}")
+
+    # ── Cross-index deduplication ─────────────────────────────────
+    # Split tickers into those we already have vs those we need to fetch.
+    cached_hits = {}
+    tickers_to_download = []
+
+    if shared_stock_cache is not None:
+        for t in tickers:
+            if t in shared_stock_cache:
+                cached_hits[t] = shared_stock_cache[t]
+            else:
+                tickers_to_download.append(t)
+        if cached_hits:
+            print(f"[download_index_data] {index_name}: Reusing {len(cached_hits)} tickers from prior indexes, "
+                  f"downloading {len(tickers_to_download)} new")
+    else:
+        tickers_to_download = list(tickers)
+    # ─────────────────────────────────────────────────────────────
+
     end_date = datetime.today()
+    stock_data = dict(cached_hits)  # Start with cache hits
+
+    if not tickers_to_download:
+        # Everything was cached — nothing to download
+        print(f"[download_index_data] {index_name}: All {len(stock_data)} tickers served from cache")
+        failed_downloads = []
+        return stock_data, False, len(stock_data), failed_downloads
+
     try:
-        df = yf.download(tickers, start=start_date, end=end_date, group_by='ticker', progress=False)
-        stock_data = {}
+        df = yf.download(tickers_to_download, start=start_date, end=end_date, group_by='ticker', progress=False)
         fallback_to_threadpool = False
-        if df is None or df.empty or (len(tickers) > 1 and not isinstance(df.columns, pd.MultiIndex)):
-            # print("[download_index_data] Batch download failed or returned empty. Using ThreadPoolExecutor for per-ticker download.")
+        if df is None or df.empty or (len(tickers_to_download) > 1 and not isinstance(df.columns, pd.MultiIndex)):
             def fetch_ticker(ticker):
                 try:
                     tdf = yf.download(ticker, start=start_date, end=end_date, progress=False)
                     if tdf is not None and not tdf.empty and len(tdf) >= 50:
-                        # Add validation to flatten any nested arrays
                         for col in tdf.columns:
                             if tdf[col].dtype == 'object':
                                 tdf[col] = tdf[col].apply(lambda x: to_scalar(x) if hasattr(x, '__len__') else x)
                                 tdf[col] = pd.to_numeric(tdf[col], errors='coerce')
                         return ticker, tdf
                 except Exception as e:
-                    pass  # print(f"[download_index_data] Per-ticker download error for {ticker}: {e}")
+                    pass
                 return ticker, None
             with ThreadPoolExecutor(max_workers=THREAD_POOL_SIZE) as executor:
-                futures = {executor.submit(fetch_ticker, ticker): ticker for ticker in tickers}
+                futures = {executor.submit(fetch_ticker, ticker): ticker for ticker in tickers_to_download}
                 for future in as_completed(futures):
                     ticker, tdf = future.result()
                     if tdf is not None:
                         stock_data[ticker] = tdf
         else:
-            for ticker in tickers:
+            for ticker in tickers_to_download:
                 tdf = None
                 if hasattr(df, 'columns') and ticker in df.columns.get_level_values(0):
                     try:
@@ -1328,12 +699,18 @@ def download_index_data(index_name, start_date, force_refresh=False):
                         tdf = None
                 if tdf is not None and not tdf.empty and len(tdf) >= 50:
                     stock_data[ticker] = tdf
+
+        # ── Write newly downloaded tickers back to shared cache ───
+        if shared_stock_cache is not None:
+            for t in tickers_to_download:
+                if t in stock_data and t not in shared_stock_cache:
+                    shared_stock_cache[t] = stock_data[t]
+        # ──────────────────────────────────────────────────────────
+
         failed_downloads = [t for t in tickers if t not in stock_data]
         successful_downloads = len(stock_data)
-        # print(f"[download_index_data] Download complete. Success: {successful_downloads}, Failed: {failed_downloads}")
         return stock_data, fallback_to_threadpool, successful_downloads, failed_downloads
     except Exception as e:
-        # print(f"[download_index_data] Batch download error: {e}")
         return {}, False, 0, tickers
 
 def calculate_market_condition(df):
@@ -1387,218 +764,6 @@ def select_models_for_market(market_condition, is_custom=False):
     }
     
     return model_selections.get(market_condition, [2, 7, 6])
-
-def flatten_series(s):
-    """
-    Flatten any Series or DataFrame to a 1D Series.
-    Enhanced to handle 2D arrays from YFinance data.
-    """
-    # If DataFrame, take first column
-    if isinstance(s, pd.DataFrame):
-        s = s.iloc[:, 0]
-        
-    # If numpy array, flatten to 1D
-    if isinstance(s, np.ndarray):
-        # Special handling for 2D arrays
-        if s.ndim > 1:
-            # Take first column for 2D arrays
-            s = s[:, 0] if s.shape[1] > 0 else s.flatten()
-        s = s.flatten()
-        return pd.Series(s)
-        
-    # If Series, ensure values are scalar
-    if isinstance(s, pd.Series):
-        # Check if any values are arrays/lists and flatten them
-        if s.dtype == 'object':
-            return s.apply(lambda x: to_scalar(x) if hasattr(x, '__len__') else x)
-        return s
-        
-    # Fallback: convert to 1D array then Series
-    try:
-        arr = np.asarray(s).flatten()
-        return pd.Series(arr)
-    except:
-        # Ultimate fallback: return empty series
-        return pd.Series()
-
-def detect_market_regime(etf_df):
-    """Robust regime detection using multiple indicators from the index ETF ticker's data."""
-    if etf_df is None or len(etf_df) < MIN_DATA_POINTS:
-        return 'sideways', 0.5
-        
-    # Create a copy to avoid modifying the original dataframe
-    df = etf_df.copy()
-    
-    # STEP 1: Pre-process all OHLCV columns to ensure they're 1D arrays
-    for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
-        if col in df.columns:
-            # Check if column contains arrays or has unexpected structure
-            try:
-                # First check: If any element is an array/list type
-                if df[col].dtype == 'object':
-                    df[col] = df[col].apply(lambda x: to_scalar(x) if hasattr(x, '__len__') else x)
-                
-                # Second check: For multi-dimensional numpy arrays
-                sample = df[col].iloc[0] if len(df) > 0 else None
-                if hasattr(sample, 'shape') and hasattr(sample, '__len__') and len(sample) > 0:
-                    df[col] = df[col].apply(lambda x: to_scalar(x))
-                
-                # Ensure all values are proper numeric type
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-            except Exception as e:
-        # print(f"Error flattening column {col}: {e}")
-                # Provide default values if conversion fails
-                df[col] = np.nan
-    
-    # STEP 2: Now proceed with indicator calculations using flattened data
-    try:
-        # Calculate indicators if not present
-        if 'SMA_20' not in df:
-            df['SMA_20'] = flatten_series(df['Close'].rolling(window=20).mean())
-        if 'SMA_50' not in df:
-            df['SMA_50'] = flatten_series(df['Close'].rolling(window=50).mean())
-        
-        # MACD calculation with proper error handling
-        try:
-            if 'macd' not in df or 'macd_signal' not in df:
-                macd = MACD(close=df['Close'])
-                macd_val_raw = macd.macd()
-                macd_signal_raw = macd.macd_signal()
-                df['macd'] = flatten_series(macd_val_raw)
-                df['macd_signal'] = flatten_series(macd_signal_raw)
-                df['ema_diff'] = flatten_series(df['macd'] - df['macd_signal'])
-        except Exception as e:
-        # print(f"Error calculating MACD: {e}")
-            # Provide default values for MACD if calculation fails
-            df['macd'] = np.nan
-            df['macd_signal'] = np.nan
-            df['ema_diff'] = np.nan
-            
-        # Continue with other indicators with similar error handling
-        try:
-            if 'stoch_k' not in df:
-                stoch = StochasticOscillator(high=df['High'], low=df['Low'], close=df['Close'])
-                df['stoch_k'] = flatten_series(stoch.stoch())
-        except Exception as e:
-        # print(f"Error calculating Stochastic: {e}")
-            df['stoch_k'] = np.nan
-            
-        try:
-            if 'Donchian_Width' not in df:
-                df['Donchian_Width'] = flatten_series(df['High'].rolling(window=20).max() - df['Low'].rolling(window=20).min())
-        except Exception as e:
-        # print(f"Error calculating Donchian Width: {e}")
-            df['Donchian_Width'] = np.nan
-            
-        try:
-            if 'RSI' not in df:
-                df['RSI'] = flatten_series(RSIIndicator(close=df['Close']).rsi())
-        except Exception as e:
-        # print(f"Error calculating RSI: {e}")
-            df['RSI'] = np.nan
-            
-        try:
-            if 'williams_r' not in df:
-                df['williams_r'] = flatten_series(WilliamsRIndicator(high=df['High'], low=df['Low'], close=df['Close'], lbp=14).williams_r())
-        except Exception as e:
-        # print(f"Error calculating Williams %R: {e}")
-            df['williams_r'] = np.nan
-            
-        try:
-            if 'ATR' not in df:
-                df['ATR'] = flatten_series(AverageTrueRange(high=df['High'], low=df['Low'], close=df['Close']).average_true_range())
-        except Exception as e:
-        # print(f"Error calculating ATR: {e}")
-            df['ATR'] = np.nan
-            
-        try:
-            if 'rolling_20d_std' not in df:
-                df['rolling_20d_std'] = flatten_series(df['Close'].rolling(window=20).std())
-        except Exception as e:
-        # print(f"Error calculating rolling std: {e}")
-            df['rolling_20d_std'] = np.nan
-            
-        try:
-            if 'percent_b' not in df:
-                upper = flatten_series(df['SMA_20'] + 2*df['Close'].rolling(window=20).std())
-                lower = flatten_series(df['SMA_20'] - 2*df['Close'].rolling(window=20).std())
-                df['percent_b'] = flatten_series((df['Close'] - lower) / (upper - lower))
-        except Exception as e:
-        # print(f"Error calculating Percent B: {e}")
-            df['percent_b'] = np.nan
-            
-        try:
-            if 'OBV' not in df:
-                df['OBV'] = flatten_series(OnBalanceVolumeIndicator(close=df['Close'], volume=df['Volume']).on_balance_volume())
-        except Exception as e:
-        # print(f"Error calculating OBV: {e}")
-            df['OBV'] = np.nan
-    
-    except Exception as e:
-        # print(f"Error in market regime detection: {e}")
-        return 'sideways', 0.5  # Default fallback
-        
-    # Continue with remaining indicators with error handling
-    try:
-        if 'cmf' not in df:
-            df['cmf'] = flatten_series(ChaikinMoneyFlowIndicator(high=df['High'], low=df['Low'], close=df['Close'], volume=df['Volume']).chaikin_money_flow())
-    except Exception as e:
-        # print(f"Error calculating CMF: {e}")
-        df['cmf'] = np.nan
-    recent = df.tail(30)
-    # --- Trend ---
-    sma_20 = recent['SMA_20'].iloc[-1]
-    sma_50 = recent['SMA_50'].iloc[-1]
-    price = recent['Close'].iloc[-1]
-    macd_val = recent['macd'].iloc[-1]
-    macd_signal = recent['macd_signal'].iloc[-1]
-    ema_diff = recent['ema_diff'].iloc[-1]
-    donchian_width = recent['Donchian_Width'].iloc[-1]
-    # --- Momentum ---
-    rsi = recent['RSI'].iloc[-1]
-    willr = recent['williams_r'].iloc[-1]
-    stoch_k = recent['stoch_k'].iloc[-1]
-    # --- Volatility ---
-    atr = recent['ATR'].iloc[-1]
-    rolling_std = recent['rolling_20d_std'].iloc[-1]
-    percent_b = recent['percent_b'].iloc[-1]
-    # --- Volume ---
-    obv = recent['OBV'].iloc[-1]
-    cmf = recent['cmf'].iloc[-1]
-    # --- Regime logic ---
-    # Trend regime (use macd and ema_diff instead of price_vs_ema)
-    bull = (price > sma_20 > sma_50) and (macd_val > macd_signal) and (ema_diff > 0) and (donchian_width > 0.02 * price)
-    bear = (price < sma_20 < sma_50) and (macd_val < macd_signal) and (ema_diff < 0) and (donchian_width > 0.02 * price)
-    # Momentum regime
-    overbought = (rsi > 70) or (willr > -20) or (stoch_k > 80)
-    oversold = (rsi < 30) or (willr < -80) or (stoch_k < 20)
-    # Volatility regime
-    high_vol = (atr > 0.03 * price) or (rolling_std > 0.03 * price) or (percent_b > 0.95 or percent_b < 0.05)
-    # Volume regime
-    strong_volume = (cmf > 0.1) or (obv > 0)
-    weak_volume = (cmf < -0.1) or (obv < 0)
-    # Decision
-    if bull and not high_vol and strong_volume:
-        return 'bull', 0.8
-    elif bear and not high_vol and weak_volume:
-        return 'bear', 0.8
-    elif high_vol:
-        return 'volatile', 0.7
-    elif overbought or oversold:
-        return 'sideways', 0.5
-    else:
-        return 'sideways', 0.5
-
-def calc_slope(x):
-    """Calculate slope of a series"""
-    # Ensure x is iterable and has length
-    if not hasattr(x, '__len__') or isinstance(x, (str, np.number)):
-        x = [x]
-    x = ensure_iterable(x)
-    
-    if len(x) < 2:
-        return np.nan
-    return np.polyfit(range(len(x)), x, 1)[0]
 
 def add_features_to_stock_original(ticker, df, prediction_window=5):
     """
@@ -2856,44 +2021,6 @@ def train_models_parallel(stock_data, model_ids, regime=None, regime_strength=0.
     
     return trained_models
 
-def simulate_prediction_model(df, model_id, prediction_window, confidence_interval):
-    """Simulate prediction using different model types"""
-    if df is None or len(df) < MIN_DATA_POINTS:
-        return None, None, None
-    # Calculate all technical indicators
-    df = add_features_to_stock('TICKER', df, prediction_window)
-    # Get recent data for prediction
-    recent = df.tail(30).dropna()
-    if len(recent) < 20:
-        return None, None, None
-    # Simulate different model behaviors based on technical indicators
-    base_prediction = np.random.normal(0.02, 0.05)  # 2% average return
-    # Use technical indicators to adjust prediction
-    if not recent.empty:
-        # RSI-based adjustment
-        current_rsi = recent['RSI'].iloc[-1] if not pd.isna(recent['RSI'].iloc[-1]) else 50
-        if current_rsi > 70:
-            base_prediction *= 0.8  # Overbought, reduce prediction
-        elif current_rsi < 30:
-            base_prediction *= 1.2  # Oversold, increase prediction
-        # Momentum-based adjustment
-        momentum = recent['momentum'].iloc[-1] if not pd.isna(recent['momentum'].iloc[-1]) else 0
-        if momentum > 0:
-            base_prediction *= 1.1
-        else:
-            base_prediction *= 0.9
-        # Volatility-based adjustment
-        volatility = recent['volatility'].iloc[-1] if not pd.isna(recent['volatility'].iloc[-1]) else 0.02
-        if volatility > 0.03:
-            base_prediction *= 0.8  # High volatility, reduce prediction
-        elif volatility < 0.01:
-            base_prediction *= 1.1  # Low volatility, increase prediction
-    # Add market condition influence
-    market_condition, _ = calculate_market_condition(df)
-    if market_condition == 'bull':
-        base_prediction += 0.01
-    elif market_condition == 'bear':
-        base_prediction -= 0.01
 def create_prediction_chart(df, prediction, lower, upper, ticker_name):
     """Create a matplotlib chart showing prediction"""
     plt.figure(figsize=(12, 8))
@@ -2985,35 +2112,6 @@ def create_multi_stock_prediction_chart(stock_data, stock_predictions, predictio
     return image_base64
 
 # --- Single Ticker Functions (no parallelization) ---
-
-
-def get_sector_sentiment(ticker):
-    """
-    Get sentiment score for sector-wide news
-    Returns: sentiment score from -100 to +100
-    """
-    try:
-        # Sector mapping for major tickers
-        sector_map = {
-            'AAPL': 'Technology', 'MSFT': 'Technology', 'GOOGL': 'Technology', 'AMZN': 'Technology',
-            'TSLA': 'Automotive', 'NVDA': 'Technology', 'META': 'Technology',
-            'JPM': 'Financial', 'BAC': 'Financial', 'WFC': 'Financial',
-            'JNJ': 'Healthcare', 'PFE': 'Healthcare', 'UNH': 'Healthcare',
-            'XOM': 'Energy', 'CVX': 'Energy', 'COP': 'Energy'
-        }
-        
-        sector = sector_map.get(ticker, 'General Market')
-        
-        # Simulated sector sentiment
-        random.seed(hash(sector) % 500)  # Consistent for same sector
-        sector_sentiment = random.uniform(-20, 30)  # Generally less extreme than company
-        
-        # print(f"[get_sector_sentiment] {ticker} ({sector}): {sector_sentiment:.1f}")
-        return sector_sentiment
-        
-    except Exception as e:
-        # print(f"[get_sector_sentiment] Error for {ticker}: {e}")
-        return 0.0
 
 def analyze_ticker_sentiment(ticker):
     """
@@ -3167,41 +2265,6 @@ def download_single_ticker_data(ticker, start_date):
     except Exception as e:
         # print(f"[download_single_ticker_data] Error downloading {ticker}: {e}")
         return None
-
-def to_scalar(x):
-    """
-    Convert any array-like or nested value to a scalar.
-    Handles multiple data types safely including nested arrays, lists, and Series objects.
-    """
-    try:
-        # If it's None or already scalar
-        if x is None or np.isscalar(x):
-            return x
-            
-        # If it's a pandas Series
-        if isinstance(x, pd.Series):
-            if len(x) > 0:
-                return to_scalar(x.iloc[0])
-            return np.nan
-            
-        # If it's a numpy array
-        if isinstance(x, np.ndarray):
-            x = x.flatten()  # Flatten any multi-dimensional array
-            if x.size > 0:
-                return float(x[0])
-            return np.nan
-            
-        # If it's a list or tuple
-        if isinstance(x, (list, tuple)):
-            if len(x) > 0:
-                return to_scalar(x[0])
-            return np.nan
-            
-        # Try direct float conversion as last resort
-        return float(x)
-        
-    except Exception:
-        return np.nan  # Return NaN for any conversion failure
 
 def add_features_single(ticker, df, prediction_window=5, market_data_cache=None):
     """Add features to a single ticker's data (no parallelization)."""
@@ -3802,25 +2865,6 @@ def refresh_market_sentiment():
             'message': 'Market sentiment refreshed successfully',
             'new_market_sentiment': market_sentiment,
             'timestamp': MARKET_SENTIMENT_TIMESTAMP
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/test-news', methods=['GET'])
-def test_news_api():
-    """Test endpoint to check Alpha Vantage News API"""
-    try:
-        query = request.args.get('query', 'financial_markets')
-        is_ticker = request.args.get('is_ticker', 'false').lower() == 'true'
-        
-        print(f"📰 Testing Alpha Vantage API with query: {query}, is_ticker: {is_ticker}")
-        articles = get_alpha_vantage_news(query, limit=5, is_ticker=is_ticker)
-        
-        return jsonify({
-            'query': query,
-            'is_ticker': is_ticker,
-            'articles_found': len(articles),
-            'articles': articles[:3]  # Return first 3 articles for testing
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500

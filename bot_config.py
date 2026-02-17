@@ -26,6 +26,7 @@ TOP_N_PER_INDEX = 2    # number of stocks to select per index
 CACHE_MAX_SIZE = 50
 CACHE_MAX_AGE_HOURS = 24
 CACHE_DURATION = 24 * 60 * 60  # 24 hours in seconds
+CACHE_DIR = 'cache'
 
 # Threading
 THREAD_POOL_SIZE = 10
@@ -78,41 +79,11 @@ VOLATILITY_ADJUSTMENT_BASE = 0.5
 # ============================================================================
 
 SENTIMENT_CONFIG = {
-    'ALPHA_VANTAGE_API_KEY': os.getenv('ALPHA_VANTAGE_API_KEY', 'YOUR_ALPHA_VANTAGE_API_KEY'),
-    'COMPANY_NEWS_WEIGHT': 0.5,
-    'SECTOR_NEWS_WEIGHT': 0.2,
     'MARKET_NEWS_WEIGHT': 0.3,
-    'NEWS_LOOKBACK_DAYS': 7,
     'SENTIMENT_CACHE_HOURS': 1,
     'MARKET_SENTIMENT_CACHE_HOURS': 24,
     'SENTIMENT_ADJUSTMENT_MAX': 0.25,
-    'API_REQUEST_INTERVAL': 0.25
 }
-
-# Sector mapping for news searches
-SECTOR_MAPPING = {
-    'Technology': ['technology', 'tech stocks', 'software', 'hardware', 'semiconductors'],
-    'Healthcare': ['healthcare', 'pharmaceuticals', 'biotech', 'medical devices'],
-    'Financial Services': ['banking', 'finance', 'financial services', 'fintech', 'banks'],
-    'Consumer Cyclical': ['consumer cyclical', 'retail', 'e-commerce', 'consumer discretionary'],
-    'Communication Services': ['communication services', 'telecom', 'media', 'entertainment'],
-    'Industrials': ['industrial stocks', 'manufacturing', 'aerospace', 'defense'],
-    'Consumer Defensive': ['consumer staples', 'consumer defensive', 'food', 'beverages'],
-    'Energy': ['energy stocks', 'oil', 'gas', 'renewable energy'],
-    'Basic Materials': ['basic materials', 'chemicals', 'mining', 'metals'],
-    'Utilities': ['utility stocks', 'utilities', 'electric', 'water', 'gas utilities'],
-    'Real Estate': ['real estate', 'reits', 'property']
-}
-
-# Market sentiment search terms
-MARKET_SENTIMENT_TERMS = [
-    'SPY',
-    'QQQ',
-    'DIA',
-    'IWM',
-    'VIX',
-    'TLT'
-]
 
 # ============================================================================
 # INDEX CONFIGURATIONS

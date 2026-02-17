@@ -117,22 +117,6 @@ def sanitize_for_json(obj):
         return obj
 
 
-def select_models_for_market(market_condition, is_custom=False):
-    """Select appropriate models based on market condition"""
-    if is_custom:
-        # For custom tickers, use a balanced selection
-        return [2, 7, 6]  # Random Forest, SVR, Bayesian Ridge
-    
-    model_selections = {
-        'bull': [1, 4, 8],      # XGBoost, Extra Trees, Gradient Boosting
-        'bear': [6, 9, 2],      # Bayesian Ridge, Elastic Net, Random Forest
-        'sideways': [2, 7, 6],  # Random Forest, SVR, Bayesian Ridge
-        'volatile': [4, 5, 8]   # Extra Trees, AdaBoost, Gradient Boosting
-    }
-    
-    return model_selections.get(market_condition, [2, 7, 6])
-
-
 def detect_market_regime(etf_df):
     """Robust regime detection using multiple indicators from the index ETF ticker's data."""
     if etf_df is None or len(etf_df) < MIN_DATA_POINTS:

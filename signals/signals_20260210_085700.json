@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-02-10T08:57:00.568888",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "DDOG",
+        "index": "SPY",
+        "predicted_return": 0.10584,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 114.01,
+        "limit_sell": 121.31,
+        "timestamp": "2026-02-10T08:57:00.568783"
+      },
+      {
+        "ticker": "HSIC",
+        "index": "SPY",
+        "predicted_return": 0.09642,
+        "direction": "up",
+        "direction_probability": 65.0,
+        "last_close": 80.1,
+        "limit_sell": 85.12,
+        "timestamp": "2026-02-10T08:57:00.568801"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "DDOG",
+        "index": "NASDAQ",
+        "predicted_return": 0.10584,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 114.01,
+        "limit_sell": 121.31,
+        "timestamp": "2026-02-10T08:57:00.568805"
+      },
+      {
+        "ticker": "MAR",
+        "index": "NASDAQ",
+        "predicted_return": 0.07152,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 331.21,
+        "limit_sell": 345.3,
+        "timestamp": "2026-02-10T08:57:00.568809"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "BHF",
+        "index": "SP400",
+        "predicted_return": 0.10344,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 63.7,
+        "limit_sell": 67.75,
+        "timestamp": "2026-02-10T08:57:00.568813"
+      },
+      {
+        "ticker": "KNF",
+        "index": "SP400",
+        "predicted_return": 0.10187,
+        "direction": "up",
+        "direction_probability": 59.0,
+        "last_close": 78.46,
+        "limit_sell": 83.18,
+        "timestamp": "2026-02-10T08:57:00.568818"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "MNRO",
+        "index": "SPSM",
+        "predicted_return": 0.13865,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 21.04,
+        "limit_sell": 22.95,
+        "timestamp": "2026-02-10T08:57:00.568821"
+      },
+      {
+        "ticker": "DOCN",
+        "index": "SPSM",
+        "predicted_return": 0.12216,
+        "direction": "up",
+        "direction_probability": 63.5,
+        "last_close": 64.74,
+        "limit_sell": 69.76,
+        "timestamp": "2026-02-10T08:57:00.568824"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "MNRO",
+      "index": "SPSM",
+      "predicted_return": 0.13865,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 21.04,
+      "limit_sell": 22.95,
+      "timestamp": "2026-02-10T08:57:00.568821"
+    },
+    {
+      "ticker": "DOCN",
+      "index": "SPSM",
+      "predicted_return": 0.12216,
+      "direction": "up",
+      "direction_probability": 63.5,
+      "last_close": 64.74,
+      "limit_sell": 69.76,
+      "timestamp": "2026-02-10T08:57:00.568824"
+    },
+    {
+      "ticker": "DDOG",
+      "index": "SPY",
+      "predicted_return": 0.10584,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 114.01,
+      "limit_sell": 121.31,
+      "timestamp": "2026-02-10T08:57:00.568783"
+    },
+    {
+      "ticker": "DDOG",
+      "index": "NASDAQ",
+      "predicted_return": 0.10584,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 114.01,
+      "limit_sell": 121.31,
+      "timestamp": "2026-02-10T08:57:00.568805"
+    },
+    {
+      "ticker": "BHF",
+      "index": "SP400",
+      "predicted_return": 0.10344,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 63.7,
+      "limit_sell": 67.75,
+      "timestamp": "2026-02-10T08:57:00.568813"
+    },
+    {
+      "ticker": "KNF",
+      "index": "SP400",
+      "predicted_return": 0.10187,
+      "direction": "up",
+      "direction_probability": 59.0,
+      "last_close": 78.46,
+      "limit_sell": 83.18,
+      "timestamp": "2026-02-10T08:57:00.568818"
+    },
+    {
+      "ticker": "HSIC",
+      "index": "SPY",
+      "predicted_return": 0.09642,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 80.1,
+      "limit_sell": 85.12,
+      "timestamp": "2026-02-10T08:57:00.568801"
+    },
+    {
+      "ticker": "MAR",
+      "index": "NASDAQ",
+      "predicted_return": 0.07152,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 331.21,
+      "limit_sell": 345.3,
+      "timestamp": "2026-02-10T08:57:00.568809"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 10.57,
+    "best_signal": "MNRO",
+    "best_return": 0.13865
+  }
+}

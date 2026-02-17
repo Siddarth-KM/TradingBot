@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-01-06T17:34:12.544531",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "INTC",
+        "index": "SPY",
+        "predicted_return": 0.07848,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 39.37,
+        "limit_sell": 41.18,
+        "timestamp": "2026-01-06T17:34:12.544375"
+      },
+      {
+        "ticker": "LLY",
+        "index": "SPY",
+        "predicted_return": 0.0704,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 1041.51,
+        "limit_sell": 1084.04,
+        "timestamp": "2026-01-06T17:34:12.544403"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "INTC",
+        "index": "NASDAQ",
+        "predicted_return": 0.07848,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 39.37,
+        "limit_sell": 41.18,
+        "timestamp": "2026-01-06T17:34:12.544420"
+      },
+      {
+        "ticker": "DDOG",
+        "index": "NASDAQ",
+        "predicted_return": 0.05968,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 133.64,
+        "limit_sell": 138.46,
+        "timestamp": "2026-01-06T17:34:12.544432"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "AVAV",
+        "index": "SP400",
+        "predicted_return": 0.13083,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 297.41,
+        "limit_sell": 320.17,
+        "timestamp": "2026-01-06T17:34:12.544445"
+      },
+      {
+        "ticker": "MAT",
+        "index": "SP400",
+        "predicted_return": 0.07817,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 20.57,
+        "limit_sell": 21.54,
+        "timestamp": "2026-01-06T17:34:12.544457"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "NEO",
+        "index": "SPSM",
+        "predicted_return": 0.12587,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 12.08,
+        "limit_sell": 13.0,
+        "timestamp": "2026-01-06T17:34:12.544469"
+      },
+      {
+        "ticker": "PTEN",
+        "index": "SPSM",
+        "predicted_return": 0.11044,
+        "direction": "up",
+        "direction_probability": 63.0,
+        "last_close": 6.79,
+        "limit_sell": 7.26,
+        "timestamp": "2026-01-06T17:34:12.544482"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "AVAV",
+      "index": "SP400",
+      "predicted_return": 0.13083,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 297.41,
+      "limit_sell": 320.17,
+      "timestamp": "2026-01-06T17:34:12.544445"
+    },
+    {
+      "ticker": "NEO",
+      "index": "SPSM",
+      "predicted_return": 0.12587,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 12.08,
+      "limit_sell": 13.0,
+      "timestamp": "2026-01-06T17:34:12.544469"
+    },
+    {
+      "ticker": "PTEN",
+      "index": "SPSM",
+      "predicted_return": 0.11044,
+      "direction": "up",
+      "direction_probability": 63.0,
+      "last_close": 6.79,
+      "limit_sell": 7.26,
+      "timestamp": "2026-01-06T17:34:12.544482"
+    },
+    {
+      "ticker": "INTC",
+      "index": "SPY",
+      "predicted_return": 0.07848,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 39.37,
+      "limit_sell": 41.18,
+      "timestamp": "2026-01-06T17:34:12.544375"
+    },
+    {
+      "ticker": "INTC",
+      "index": "NASDAQ",
+      "predicted_return": 0.07848,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 39.37,
+      "limit_sell": 41.18,
+      "timestamp": "2026-01-06T17:34:12.544420"
+    },
+    {
+      "ticker": "MAT",
+      "index": "SP400",
+      "predicted_return": 0.07817,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 20.57,
+      "limit_sell": 21.54,
+      "timestamp": "2026-01-06T17:34:12.544457"
+    },
+    {
+      "ticker": "LLY",
+      "index": "SPY",
+      "predicted_return": 0.0704,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 1041.51,
+      "limit_sell": 1084.04,
+      "timestamp": "2026-01-06T17:34:12.544403"
+    },
+    {
+      "ticker": "DDOG",
+      "index": "NASDAQ",
+      "predicted_return": 0.05968,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 133.64,
+      "limit_sell": 138.46,
+      "timestamp": "2026-01-06T17:34:12.544432"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 9.15,
+    "best_signal": "AVAV",
+    "best_return": 0.13083
+  }
+}

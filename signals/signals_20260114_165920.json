@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-01-14T16:59:20.320109",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "BG",
+        "index": "SPY",
+        "predicted_return": 0.04838,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 105.46,
+        "limit_sell": 108.83,
+        "timestamp": "2026-01-14T16:59:20.320019"
+      },
+      {
+        "ticker": "NEM",
+        "index": "SPY",
+        "predicted_return": 0.04111,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 114.15,
+        "limit_sell": 116.94,
+        "timestamp": "2026-01-14T16:59:20.320035"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "GOOGL",
+        "index": "NASDAQ",
+        "predicted_return": 0.02871,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 335.84,
+        "limit_sell": 342.16,
+        "timestamp": "2026-01-14T16:59:20.320040"
+      },
+      {
+        "ticker": "KLAC",
+        "index": "NASDAQ",
+        "predicted_return": 0.02802,
+        "direction": "up",
+        "direction_probability": 59.0,
+        "last_close": 1434.5,
+        "limit_sell": 1458.21,
+        "timestamp": "2026-01-14T16:59:20.320044"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "MP",
+        "index": "SP400",
+        "predicted_return": 0.10897,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 69.3,
+        "limit_sell": 74.28,
+        "timestamp": "2026-01-14T16:59:20.320048"
+      },
+      {
+        "ticker": "HL",
+        "index": "SP400",
+        "predicted_return": 0.08487,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 23.8,
+        "limit_sell": 25.04,
+        "timestamp": "2026-01-14T16:59:20.320052"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "RCUS",
+        "index": "SPSM",
+        "predicted_return": 0.07678,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 24.56,
+        "limit_sell": 25.8,
+        "timestamp": "2026-01-14T16:59:20.320055"
+      },
+      {
+        "ticker": "BTU",
+        "index": "SPSM",
+        "predicted_return": 0.07334,
+        "direction": "up",
+        "direction_probability": 65.0,
+        "last_close": 36.04,
+        "limit_sell": 37.76,
+        "timestamp": "2026-01-14T16:59:20.320058"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "MP",
+      "index": "SP400",
+      "predicted_return": 0.10897,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 69.3,
+      "limit_sell": 74.28,
+      "timestamp": "2026-01-14T16:59:20.320048"
+    },
+    {
+      "ticker": "HL",
+      "index": "SP400",
+      "predicted_return": 0.08487,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 23.8,
+      "limit_sell": 25.04,
+      "timestamp": "2026-01-14T16:59:20.320052"
+    },
+    {
+      "ticker": "RCUS",
+      "index": "SPSM",
+      "predicted_return": 0.07678,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 24.56,
+      "limit_sell": 25.8,
+      "timestamp": "2026-01-14T16:59:20.320055"
+    },
+    {
+      "ticker": "BTU",
+      "index": "SPSM",
+      "predicted_return": 0.07334,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 36.04,
+      "limit_sell": 37.76,
+      "timestamp": "2026-01-14T16:59:20.320058"
+    },
+    {
+      "ticker": "BG",
+      "index": "SPY",
+      "predicted_return": 0.04838,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 105.46,
+      "limit_sell": 108.83,
+      "timestamp": "2026-01-14T16:59:20.320019"
+    },
+    {
+      "ticker": "NEM",
+      "index": "SPY",
+      "predicted_return": 0.04111,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 114.15,
+      "limit_sell": 116.94,
+      "timestamp": "2026-01-14T16:59:20.320035"
+    },
+    {
+      "ticker": "GOOGL",
+      "index": "NASDAQ",
+      "predicted_return": 0.02871,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 335.84,
+      "limit_sell": 342.16,
+      "timestamp": "2026-01-14T16:59:20.320040"
+    },
+    {
+      "ticker": "KLAC",
+      "index": "NASDAQ",
+      "predicted_return": 0.02802,
+      "direction": "up",
+      "direction_probability": 59.0,
+      "last_close": 1434.5,
+      "limit_sell": 1458.21,
+      "timestamp": "2026-01-14T16:59:20.320044"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 6.13,
+    "best_signal": "MP",
+    "best_return": 0.10897
+  }
+}

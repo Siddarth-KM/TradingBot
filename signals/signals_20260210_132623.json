@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-02-10T13:26:23.703233",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "DDOG",
+        "index": "NASDAQ",
+        "predicted_return": 0.10609,
+        "direction": "up",
+        "direction_probability": 60.5,
+        "last_close": 114.01,
+        "limit_sell": 121.33,
+        "timestamp": "2026-02-10T13:26:23.703117"
+      },
+      {
+        "ticker": "MAR",
+        "index": "NASDAQ",
+        "predicted_return": 0.07176,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 331.21,
+        "limit_sell": 345.35,
+        "timestamp": "2026-02-10T13:26:23.703137"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "DDOG",
+      "index": "NASDAQ",
+      "predicted_return": 0.10609,
+      "direction": "up",
+      "direction_probability": 60.5,
+      "last_close": 114.01,
+      "limit_sell": 121.33,
+      "timestamp": "2026-02-10T13:26:23.703117"
+    },
+    {
+      "ticker": "MAR",
+      "index": "NASDAQ",
+      "predicted_return": 0.07176,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 331.21,
+      "limit_sell": 345.35,
+      "timestamp": "2026-02-10T13:26:23.703137"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 8.89,
+    "best_signal": "DDOG",
+    "best_return": 0.10609
+  }
+}

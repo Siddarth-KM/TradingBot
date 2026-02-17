@@ -18,7 +18,8 @@ from threading import Lock
 import numpy as np
 import pandas as pd
 import requests
-import yfinance as yf
+# Use Massive.com API instead of yfinance
+import massive_api as yf
 from bs4 import BeautifulSoup
 from catboost import CatBoostClassifier, Pool
 from scipy import stats
@@ -35,7 +36,6 @@ from ta.momentum import RSIIndicator, WilliamsRIndicator, StochasticOscillator
 from ta.trend import MACD
 from ta.volatility import AverageTrueRange
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import xgboost as xgb
 
 from bot_config import *
@@ -44,20 +44,12 @@ from bot_utils import *
 # Configure warnings
 warnings.filterwarnings('ignore')
 logging.getLogger().setLevel(logging.ERROR)
-logging.getLogger("transformers").setLevel(logging.ERROR)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
-logging.getLogger("yfinance").setLevel(logging.ERROR)
-os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
-os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+logging.getLogger("massive").setLevel(logging.ERROR)
 
 # ============================================================================
 # GLOBAL STATE
 # ============================================================================
-
-# Sentiment model globals
-SENTIMENT_MODEL = None
-SENTIMENT_TOKENIZER = None
-SENTIMENT_PIPELINE = None
 
 # Sentiment cache with lock for thread safety
 SENTIMENT_CACHE = {}
@@ -67,44 +59,6 @@ SENTIMENT_CACHE_LOCK = Lock()
 MARKET_SENTIMENT_CACHE = None
 MARKET_SENTIMENT_TIMESTAMP = None
 MARKET_SENTIMENT_LOCK = Lock()
-
-# Track API requests to prevent rate limit issues
-LAST_NEWS_API_CALL = None
-
-# ============================================================================
-# SENTIMENT MODEL INITIALIZATION
-# ============================================================================
-
-def initialize_sentiment_model():
-    """Initialize FinBERT sentiment model"""
-    global SENTIMENT_MODEL, SENTIMENT_TOKENIZER, SENTIMENT_PIPELINE
-    
-    try:
-        print("Loading sentiment model...")
-        
-        SENTIMENT_MODEL = AutoModelForSequenceClassification.from_pretrained(
-            "ProsusAI/finbert",
-            local_files_only=False,
-            trust_remote_code=False
-        )
-        SENTIMENT_TOKENIZER = AutoTokenizer.from_pretrained(
-            "ProsusAI/finbert",
-            local_files_only=False,
-            trust_remote_code=False
-        )
-        
-        SENTIMENT_PIPELINE = pipeline(
-            "text-classification", 
-            model=SENTIMENT_MODEL, 
-            tokenizer=SENTIMENT_TOKENIZER,
-            device=-1  # Force CPU
-        )
-        
-        return True
-    except Exception as e:
-        print(f"⚠️ Sentiment model failed to load: {e}")
-        SENTIMENT_PIPELINE = None
-        return False
 
 # ============================================================================
 # SENTIMENT CACHING
@@ -136,25 +90,6 @@ def cache_sentiment(ticker, sentiment_data):
             SENTIMENT_CACHE.clear()
             for k, v in sorted_items[:80]:
                 SENTIMENT_CACHE[k] = v
-
-
-def get_ticker_sector(ticker):
-    """Get sector for a ticker from Yahoo Finance"""
-    try:
-        ticker_obj = yf.Ticker(ticker)
-        info = ticker_obj.info
-        
-        sector = info.get('sector', '')
-        if sector:
-            return sector
-            
-        industry = info.get('industry', '')
-        if industry:
-            return industry
-            
-        return 'Unknown'
-    except Exception as e:
-        return 'Unknown'
 
 # ============================================================================
 # IMPORT CORE FUNCTIONS FROM MAIN.PY
@@ -190,7 +125,6 @@ from main import (
 
 # Import sentiment functions
 from main import (
-    get_alpha_vantage_news,
     get_market_sentiment,
     get_sentiment_score,
     analyze_ticker_sentiment,
@@ -199,6 +133,7 @@ from main import (
 
 # Import prediction functions
 from main import (
+    select_models_for_market,
     apply_direction_confidence_parallel,
     filter_positive_predictions,
 )

@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-01-19T20:24:59.760281",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "SNDK",
+        "index": "SPY",
+        "predicted_return": 0.15397,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 413.62,
+        "limit_sell": 451.51,
+        "timestamp": "2026-01-19T20:24:59.760118"
+      },
+      {
+        "ticker": "BG",
+        "index": "SPY",
+        "predicted_return": 0.09883,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 107.81,
+        "limit_sell": 114.84,
+        "timestamp": "2026-01-19T20:24:59.760145"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "KLAC",
+        "index": "NASDAQ",
+        "predicted_return": 0.08049,
+        "direction": "up",
+        "direction_probability": 59.0,
+        "last_close": 1567.82,
+        "limit_sell": 1642.27,
+        "timestamp": "2026-01-19T20:24:59.760152"
+      },
+      {
+        "ticker": "LRCX",
+        "index": "NASDAQ",
+        "predicted_return": 0.05439,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 222.96,
+        "limit_sell": 230.72,
+        "timestamp": "2026-01-19T20:24:59.760156"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "KNX",
+        "index": "SP400",
+        "predicted_return": 0.04954,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 56.65,
+        "limit_sell": 58.28,
+        "timestamp": "2026-01-19T20:24:59.760161"
+      },
+      {
+        "ticker": "ROIV",
+        "index": "SP400",
+        "predicted_return": 0.0457,
+        "direction": "up",
+        "direction_probability": 57.5,
+        "last_close": 23.13,
+        "limit_sell": 23.74,
+        "timestamp": "2026-01-19T20:24:59.760166"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "TFIN",
+        "index": "SPSM",
+        "predicted_return": 0.10343,
+        "direction": "up",
+        "direction_probability": 60.0,
+        "last_close": 68.94,
+        "limit_sell": 73.22,
+        "timestamp": "2026-01-19T20:24:59.760170"
+      },
+      {
+        "ticker": "ANDE",
+        "index": "SPSM",
+        "predicted_return": 0.09765,
+        "direction": "up",
+        "direction_probability": 57.5,
+        "last_close": 57.85,
+        "limit_sell": 61.1,
+        "timestamp": "2026-01-19T20:24:59.760174"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "SNDK",
+      "index": "SPY",
+      "predicted_return": 0.15397,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 413.62,
+      "limit_sell": 451.51,
+      "timestamp": "2026-01-19T20:24:59.760118"
+    },
+    {
+      "ticker": "TFIN",
+      "index": "SPSM",
+      "predicted_return": 0.10343,
+      "direction": "up",
+      "direction_probability": 60.0,
+      "last_close": 68.94,
+      "limit_sell": 73.22,
+      "timestamp": "2026-01-19T20:24:59.760170"
+    },
+    {
+      "ticker": "BG",
+      "index": "SPY",
+      "predicted_return": 0.09883,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 107.81,
+      "limit_sell": 114.84,
+      "timestamp": "2026-01-19T20:24:59.760145"
+    },
+    {
+      "ticker": "ANDE",
+      "index": "SPSM",
+      "predicted_return": 0.09765,
+      "direction": "up",
+      "direction_probability": 57.5,
+      "last_close": 57.85,
+      "limit_sell": 61.1,
+      "timestamp": "2026-01-19T20:24:59.760174"
+    },
+    {
+      "ticker": "KLAC",
+      "index": "NASDAQ",
+      "predicted_return": 0.08049,
+      "direction": "up",
+      "direction_probability": 59.0,
+      "last_close": 1567.82,
+      "limit_sell": 1642.27,
+      "timestamp": "2026-01-19T20:24:59.760152"
+    },
+    {
+      "ticker": "LRCX",
+      "index": "NASDAQ",
+      "predicted_return": 0.05439,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 222.96,
+      "limit_sell": 230.72,
+      "timestamp": "2026-01-19T20:24:59.760156"
+    },
+    {
+      "ticker": "KNX",
+      "index": "SP400",
+      "predicted_return": 0.04954,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 56.65,
+      "limit_sell": 58.28,
+      "timestamp": "2026-01-19T20:24:59.760161"
+    },
+    {
+      "ticker": "ROIV",
+      "index": "SP400",
+      "predicted_return": 0.0457,
+      "direction": "up",
+      "direction_probability": 57.5,
+      "last_close": 23.13,
+      "limit_sell": 23.74,
+      "timestamp": "2026-01-19T20:24:59.760166"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 8.55,
+    "best_signal": "SNDK",
+    "best_return": 0.15397
+  }
+}

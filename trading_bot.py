@@ -21,6 +21,7 @@ def select_top_2_per_index(all_index_results):
     Args:
         all_index_results: dict {index_name: [list of predictions]}
         
+        
     Returns:
         dict: {index_name: [top 2 stocks]}
     """
@@ -180,6 +181,11 @@ def generate_trading_signals(
     
     all_index_results = {}
     
+    # Cross-index ticker cache: avoids re-downloading overlapping tickers
+    # (e.g., AAPL appears in both SPY and NASDAQ — download once, reuse).
+    # Each call to download_index_data() reads from and writes back to this dict.
+    shared_stock_cache = {}
+    
     # Loop through each index
     for index_name in indexes_to_analyze:
         # print(f"\n{'='*70}")
@@ -187,9 +193,10 @@ def generate_trading_signals(
         # print(f"{'='*70}")
         
         try:
-            # Step 1: Download index constituents
+            # Step 1: Download index constituents (with cross-index dedup)
             # print(f"📥 Downloading {index_name} constituent data...")
-            result = download_index_data(index_name, start_date, force_refresh)
+            result = download_index_data(index_name, start_date, force_refresh,
+                                         shared_stock_cache=shared_stock_cache)
             
             if isinstance(result, tuple):
                 stock_data, fallback_used, successful_downloads, failed_downloads = result
@@ -365,12 +372,6 @@ def main():
                 print("\n\n❌ Cancelled by user")
                 sys.exit(0)
     
-    # Initialize sentiment model
-    # print("\n📚 Initializing sentiment model...")
-    initialize_sentiment_model()
-    # print("✅ Model ready")
-    
-
     results = generate_trading_signals(
         indexes_to_analyze=args.indexes,
         prediction_window=args.window,

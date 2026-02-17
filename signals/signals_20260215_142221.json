@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-02-15T14:22:21.077665",
+  "prediction_window": 5,
+  "total_signals": 2,
+  "signals_by_index": {
+    "NASDAQ": [
+      {
+        "ticker": "CSCO",
+        "index": "NASDAQ",
+        "predicted_return": 0.05097,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 76.85,
+        "limit_sell": 79.42,
+        "timestamp": "2026-02-15T14:22:21.077605"
+      },
+      {
+        "ticker": "BIIB",
+        "index": "NASDAQ",
+        "predicted_return": 0.04422,
+        "direction": "up",
+        "direction_probability": 66.5,
+        "last_close": 196.52,
+        "limit_sell": 202.3,
+        "timestamp": "2026-02-15T14:22:21.077625"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "CSCO",
+      "index": "NASDAQ",
+      "predicted_return": 0.05097,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 76.85,
+      "limit_sell": 79.42,
+      "timestamp": "2026-02-15T14:22:21.077605"
+    },
+    {
+      "ticker": "BIIB",
+      "index": "NASDAQ",
+      "predicted_return": 0.04422,
+      "direction": "up",
+      "direction_probability": 66.5,
+      "last_close": 196.52,
+      "limit_sell": 202.3,
+      "timestamp": "2026-02-15T14:22:21.077625"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "NASDAQ"
+    ],
+    "signals_per_index": {
+      "NASDAQ": 2
+    },
+    "avg_predicted_return": 4.76,
+    "best_signal": "CSCO",
+    "best_return": 0.05097
+  }
+}

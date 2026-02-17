@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-01-26T19:15:45.797979",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "LVS",
+        "index": "SPY",
+        "predicted_return": 0.10908,
+        "direction": "up",
+        "direction_probability": 60.0,
+        "last_close": 60.88,
+        "limit_sell": 64.86,
+        "timestamp": "2026-01-26T19:15:45.797879"
+      },
+      {
+        "ticker": "GM",
+        "index": "SPY",
+        "predicted_return": 0.10455,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 79.43,
+        "limit_sell": 84.54,
+        "timestamp": "2026-01-26T19:15:45.797896"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "WBD",
+        "index": "NASDAQ",
+        "predicted_return": 0.0947,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 28.24,
+        "limit_sell": 29.79,
+        "timestamp": "2026-01-26T19:15:45.797901"
+      },
+      {
+        "ticker": "LRCX",
+        "index": "NASDAQ",
+        "predicted_return": 0.05455,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 222.87,
+        "limit_sell": 230.65,
+        "timestamp": "2026-01-26T19:15:45.797905"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "RMBS",
+        "index": "SP400",
+        "predicted_return": 0.15358,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 114.19,
+        "limit_sell": 124.98,
+        "timestamp": "2026-01-26T19:15:45.797908"
+      },
+      {
+        "ticker": "LITE",
+        "index": "SP400",
+        "predicted_return": 0.13956,
+        "direction": "up",
+        "direction_probability": 58.5,
+        "last_close": 332.45,
+        "limit_sell": 359.59,
+        "timestamp": "2026-01-26T19:15:45.797912"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "KALU",
+        "index": "SPSM",
+        "predicted_return": 0.09218,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 123.52,
+        "limit_sell": 130.12,
+        "timestamp": "2026-01-26T19:15:45.797915"
+      },
+      {
+        "ticker": "HRMY",
+        "index": "SPSM",
+        "predicted_return": 0.08353,
+        "direction": "up",
+        "direction_probability": 57.5,
+        "last_close": 37.36,
+        "limit_sell": 39.15,
+        "timestamp": "2026-01-26T19:15:45.797918"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "RMBS",
+      "index": "SP400",
+      "predicted_return": 0.15358,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 114.19,
+      "limit_sell": 124.98,
+      "timestamp": "2026-01-26T19:15:45.797908"
+    },
+    {
+      "ticker": "LITE",
+      "index": "SP400",
+      "predicted_return": 0.13956,
+      "direction": "up",
+      "direction_probability": 58.5,
+      "last_close": 332.45,
+      "limit_sell": 359.59,
+      "timestamp": "2026-01-26T19:15:45.797912"
+    },
+    {
+      "ticker": "LVS",
+      "index": "SPY",
+      "predicted_return": 0.10908,
+      "direction": "up",
+      "direction_probability": 60.0,
+      "last_close": 60.88,
+      "limit_sell": 64.86,
+      "timestamp": "2026-01-26T19:15:45.797879"
+    },
+    {
+      "ticker": "GM",
+      "index": "SPY",
+      "predicted_return": 0.10455,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 79.43,
+      "limit_sell": 84.54,
+      "timestamp": "2026-01-26T19:15:45.797896"
+    },
+    {
+      "ticker": "WBD",
+      "index": "NASDAQ",
+      "predicted_return": 0.0947,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 28.24,
+      "limit_sell": 29.79,
+      "timestamp": "2026-01-26T19:15:45.797901"
+    },
+    {
+      "ticker": "KALU",
+      "index": "SPSM",
+      "predicted_return": 0.09218,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 123.52,
+      "limit_sell": 130.12,
+      "timestamp": "2026-01-26T19:15:45.797915"
+    },
+    {
+      "ticker": "HRMY",
+      "index": "SPSM",
+      "predicted_return": 0.08353,
+      "direction": "up",
+      "direction_probability": 57.5,
+      "last_close": 37.36,
+      "limit_sell": 39.15,
+      "timestamp": "2026-01-26T19:15:45.797918"
+    },
+    {
+      "ticker": "LRCX",
+      "index": "NASDAQ",
+      "predicted_return": 0.05455,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 222.87,
+      "limit_sell": 230.65,
+      "timestamp": "2026-01-26T19:15:45.797905"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 10.4,
+    "best_signal": "RMBS",
+    "best_return": 0.15358
+  }
+}

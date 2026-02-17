@@ -1,0 +1,79 @@
+==========================================
+STEP 1: Verify Python imports
+==========================================
+Testing massive_api import...
+massive_api OK
+
+Testing trade_executor import...
+trade_executor OK
+
+==========================================
+STEP 2: Check trade_executor schedule constants
+==========================================
+LIMIT_ORDER_HOUR = 23
+LIMIT_ORDER_DAY = 0
+MARKET_ORDER_HOUR = 8
+MARKET_ORDER_DAY = 1
+
+==========================================
+STEP 3: Check existing systemd service
+==========================================
+[Unit]
+Description=Trading Bot Auto-Executor (Oracle Cloud)
+After=ibgateway.service
+Wants=ibgateway.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/tradingbot
+Environment="PATH=/opt/tradingbot/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="DISPLAY=:1"
+Environment="HOME=/home/ubuntu"
+
+# Run the trading bot in scheduled mode
+ExecStart=/opt/tradingbot/.venv/bin/python /opt/tradingbot/trade_executor.py schedule
+
+# Restart if it crashes
+Restart=always
+RestartSec=30
+
+# Logging
+StandardOutput=append:/var/log/tradingbot.log
+StandardError=append:/var/log/tradingbot.log
+
+[Install]
+WantedBy=multi-user.target
+
+==========================================
+STEP 4: Check existing crontab
+==========================================
+No crontab found
+
+==========================================
+STEP 5: Check ibgateway service
+==========================================
+● ibgateway.service - IB Gateway with IBC
+     Loaded: loaded (/etc/systemd/system/ibgateway.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sat 2026-02-14 23:45:40 UTC; 21h ago
+   Main PID: 967971 (ibcstart.sh)
+      Tasks: 112 (limit: 1053)
+
+==========================================
+STEP 6: Check tradingbot service status
+==========================================
+○ tradingbot.service - Trading Bot Auto-Executor (Oracle Cloud)
+     Loaded: loaded (/etc/systemd/system/tradingbot.service; enabled; vendor preset: enabled)
+     Active: inactive (dead) since Sun 2026-02-15 21:13:56 UTC; 17min ago
+    Process: 438429 ExecStart=/opt/tradingbot/.venv/bin/python /opt/tradingbot/trade_executor.py schedule (code=killed, signal=TERM)
+   Main PID: 438429 (code=killed, signal=TERM)
+
+==========================================
+STEP 7: Check current timezone
+==========================================
+                Time zone: Etc/UTC (UTC, +0000)
+
+==========================================
+DONE - All checks complete
+==========================================

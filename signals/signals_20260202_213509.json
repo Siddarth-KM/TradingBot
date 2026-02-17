@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-02-02T21:35:09.354645",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "TER",
+        "index": "SPY",
+        "predicted_return": 0.06513,
+        "direction": "up",
+        "direction_probability": 65.0,
+        "last_close": 249.53,
+        "limit_sell": 260.09,
+        "timestamp": "2026-02-02T21:35:09.354459"
+      },
+      {
+        "ticker": "UPS",
+        "index": "SPY",
+        "predicted_return": 0.0426,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 110.27,
+        "limit_sell": 113.16,
+        "timestamp": "2026-02-02T21:35:09.354482"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "GOOGL",
+        "index": "NASDAQ",
+        "predicted_return": 0.0325,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 343.69,
+        "limit_sell": 351.01,
+        "timestamp": "2026-02-02T21:35:09.354489"
+      },
+      {
+        "ticker": "LRCX",
+        "index": "NASDAQ",
+        "predicted_return": 0.02897,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 237.5,
+        "limit_sell": 241.9,
+        "timestamp": "2026-02-02T21:35:09.354494"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "BHF",
+        "index": "SP400",
+        "predicted_return": 0.08923,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 64.14,
+        "limit_sell": 67.66,
+        "timestamp": "2026-02-02T21:35:09.354499"
+      },
+      {
+        "ticker": "XPO",
+        "index": "SP400",
+        "predicted_return": 0.08908,
+        "direction": "up",
+        "direction_probability": 61.0,
+        "last_close": 163.06,
+        "limit_sell": 171.92,
+        "timestamp": "2026-02-02T21:35:09.354504"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "LUMN",
+        "index": "SPSM",
+        "predicted_return": 0.20296,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 8.93,
+        "limit_sell": 10.12,
+        "timestamp": "2026-02-02T21:35:09.354508"
+      },
+      {
+        "ticker": "FORM",
+        "index": "SPSM",
+        "predicted_return": 0.12286,
+        "direction": "up",
+        "direction_probability": 61.5,
+        "last_close": 71.27,
+        "limit_sell": 76.66,
+        "timestamp": "2026-02-02T21:35:09.354512"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "LUMN",
+      "index": "SPSM",
+      "predicted_return": 0.20296,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 8.93,
+      "limit_sell": 10.12,
+      "timestamp": "2026-02-02T21:35:09.354508"
+    },
+    {
+      "ticker": "FORM",
+      "index": "SPSM",
+      "predicted_return": 0.12286,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 71.27,
+      "limit_sell": 76.66,
+      "timestamp": "2026-02-02T21:35:09.354512"
+    },
+    {
+      "ticker": "BHF",
+      "index": "SP400",
+      "predicted_return": 0.08923,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 64.14,
+      "limit_sell": 67.66,
+      "timestamp": "2026-02-02T21:35:09.354499"
+    },
+    {
+      "ticker": "XPO",
+      "index": "SP400",
+      "predicted_return": 0.08908,
+      "direction": "up",
+      "direction_probability": 61.0,
+      "last_close": 163.06,
+      "limit_sell": 171.92,
+      "timestamp": "2026-02-02T21:35:09.354504"
+    },
+    {
+      "ticker": "TER",
+      "index": "SPY",
+      "predicted_return": 0.06513,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 249.53,
+      "limit_sell": 260.09,
+      "timestamp": "2026-02-02T21:35:09.354459"
+    },
+    {
+      "ticker": "UPS",
+      "index": "SPY",
+      "predicted_return": 0.0426,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 110.27,
+      "limit_sell": 113.16,
+      "timestamp": "2026-02-02T21:35:09.354482"
+    },
+    {
+      "ticker": "GOOGL",
+      "index": "NASDAQ",
+      "predicted_return": 0.0325,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 343.69,
+      "limit_sell": 351.01,
+      "timestamp": "2026-02-02T21:35:09.354489"
+    },
+    {
+      "ticker": "LRCX",
+      "index": "NASDAQ",
+      "predicted_return": 0.02897,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 237.5,
+      "limit_sell": 241.9,
+      "timestamp": "2026-02-02T21:35:09.354494"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 8.42,
+    "best_signal": "LUMN",
+    "best_return": 0.20296
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-01-14T11:08:35.273235",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "WFC",
+        "index": "SPY",
+        "predicted_return": 0.03493,
+        "direction": "up",
+        "direction_probability": 59.5,
+        "last_close": 93.56,
+        "limit_sell": 95.5,
+        "timestamp": "2026-01-14T11:08:35.273135"
+      },
+      {
+        "ticker": "LUV",
+        "index": "SPY",
+        "predicted_return": 0.03234,
+        "direction": "up",
+        "direction_probability": 61.0,
+        "last_close": 43.2,
+        "limit_sell": 44.05,
+        "timestamp": "2026-01-14T11:08:35.273151"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "PEP",
+        "index": "NASDAQ",
+        "predicted_return": 0.02637,
+        "direction": "up",
+        "direction_probability": 62.0,
+        "last_close": 143.48,
+        "limit_sell": 145.83,
+        "timestamp": "2026-01-14T11:08:35.273156"
+      },
+      {
+        "ticker": "AVGO",
+        "index": "NASDAQ",
+        "predicted_return": 0.02318,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 354.61,
+        "limit_sell": 359.38,
+        "timestamp": "2026-01-14T11:08:35.273160"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "MP",
+        "index": "SP400",
+        "predicted_return": 0.09432,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 63.82,
+        "limit_sell": 67.79,
+        "timestamp": "2026-01-14T11:08:35.273163"
+      },
+      {
+        "ticker": "NXT",
+        "index": "SP400",
+        "predicted_return": 0.06728,
+        "direction": "up",
+        "direction_probability": 62.5,
+        "last_close": 100.24,
+        "limit_sell": 104.46,
+        "timestamp": "2026-01-14T11:08:35.273167"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "PTGX",
+        "index": "SPSM",
+        "predicted_return": 0.09799,
+        "direction": "up",
+        "direction_probability": 59.0,
+        "last_close": 81.36,
+        "limit_sell": 86.06,
+        "timestamp": "2026-01-14T11:08:35.273170"
+      },
+      {
+        "ticker": "RCUS",
+        "index": "SPSM",
+        "predicted_return": 0.07056,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 22.74,
+        "limit_sell": 23.8,
+        "timestamp": "2026-01-14T11:08:35.273173"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "PTGX",
+      "index": "SPSM",
+      "predicted_return": 0.09799,
+      "direction": "up",
+      "direction_probability": 59.0,
+      "last_close": 81.36,
+      "limit_sell": 86.06,
+      "timestamp": "2026-01-14T11:08:35.273170"
+    },
+    {
+      "ticker": "MP",
+      "index": "SP400",
+      "predicted_return": 0.09432,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 63.82,
+      "limit_sell": 67.79,
+      "timestamp": "2026-01-14T11:08:35.273163"
+    },
+    {
+      "ticker": "RCUS",
+      "index": "SPSM",
+      "predicted_return": 0.07056,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 22.74,
+      "limit_sell": 23.8,
+      "timestamp": "2026-01-14T11:08:35.273173"
+    },
+    {
+      "ticker": "NXT",
+      "index": "SP400",
+      "predicted_return": 0.06728,
+      "direction": "up",
+      "direction_probability": 62.5,
+      "last_close": 100.24,
+      "limit_sell": 104.46,
+      "timestamp": "2026-01-14T11:08:35.273167"
+    },
+    {
+      "ticker": "WFC",
+      "index": "SPY",
+      "predicted_return": 0.03493,
+      "direction": "up",
+      "direction_probability": 59.5,
+      "last_close": 93.56,
+      "limit_sell": 95.5,
+      "timestamp": "2026-01-14T11:08:35.273135"
+    },
+    {
+      "ticker": "LUV",
+      "index": "SPY",
+      "predicted_return": 0.03234,
+      "direction": "up",
+      "direction_probability": 61.0,
+      "last_close": 43.2,
+      "limit_sell": 44.05,
+      "timestamp": "2026-01-14T11:08:35.273151"
+    },
+    {
+      "ticker": "PEP",
+      "index": "NASDAQ",
+      "predicted_return": 0.02637,
+      "direction": "up",
+      "direction_probability": 62.0,
+      "last_close": 143.48,
+      "limit_sell": 145.83,
+      "timestamp": "2026-01-14T11:08:35.273156"
+    },
+    {
+      "ticker": "AVGO",
+      "index": "NASDAQ",
+      "predicted_return": 0.02318,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 354.61,
+      "limit_sell": 359.38,
+      "timestamp": "2026-01-14T11:08:35.273160"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 5.59,
+    "best_signal": "PTGX",
+    "best_return": 0.09799
+  }
+}
