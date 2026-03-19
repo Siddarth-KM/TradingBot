@@ -991,28 +991,30 @@ class IBAutoTrader(EWrapper, EClient):
     
     def execute_monday_limit_orders(self, signals: List[dict], max_positions: int,
                                     total_capital: float,
+                                    allocation_pct: float = 1.0,
                                     exclude_tickers: set = None,
                                     existing_tracking: Dict[str, dict] = None) -> Dict[str, dict]:
         """
         Execute Monday evening limit orders.
-        
+
         Places limit orders at live_price * 1.001 (0.1% above market).
         Orders persist overnight as GTC.
         Saves incrementally after each order to survive mid-batch crashes.
-        
+
         Edge Cases Handled:
         - #1: Skip if live_price >= limit_sell (overnight gap up risk)
         - #5: Skip if already holding position
         - #11: Skip if ticker already has a pending limit order (dedup)
         - #12: Incremental save — each order is persisted immediately
-        
+
         Args:
             signals: List of signal dictionaries from trading bot
             max_positions: Maximum number of positions to open
             total_capital: Total capital to allocate (from IB account)
+            allocation_pct: Kelly MHVRP allocation (0.50-1.0), scales effective capital
             exclude_tickers: Set of tickers to skip (already have pending orders)
             existing_tracking: Existing pending orders dict (for incremental merge+save)
-            
+
         Returns:
             Dict mapping symbols to their NEW tracking info (does not include existing)
         """
@@ -1020,13 +1022,16 @@ class IBAutoTrader(EWrapper, EClient):
             exclude_tickers = set()
         if existing_tracking is None:
             existing_tracking = {}
-        # Calculate capital per position
-        capital_per_position = total_capital / max_positions
-        
+        # Apply Kelly MHVRP allocation to effective capital
+        effective_capital = total_capital * allocation_pct
+        capital_per_position = effective_capital / max_positions
+
         print(f"\n{'='*60}")
         print(f"MONDAY LIMIT ORDER EXECUTION")
         print(f"{'='*60}")
         print(f"Total Capital: ${total_capital:,.2f} (from IB)")
+        print(f"Health Alloc:  {allocation_pct:.1%} (Kelly MHVRP)")
+        print(f"Effective Cap: ${effective_capital:,.2f}")
         print(f"Max Positions: {max_positions}")
         print(f"Per Position:  ${capital_per_position:,.2f}")
         print(f"Limit Premium: {LIMIT_PREMIUM_PCT*100:.1f}% above live price")
@@ -1143,29 +1148,33 @@ class IBAutoTrader(EWrapper, EClient):
         return tracking_map
     
     def execute_tuesday_market_fallback(self, pending_orders: Dict[str, dict],
-                                        total_capital: float) -> Dict[str, dict]:
+                                        total_capital: float,
+                                        allocation_pct: float = 1.0) -> Dict[str, dict]:
         """
         Execute Tuesday morning market order fallback.
-        
+
         Checks Monday's limit orders:
         - If filled: Keep position, do nothing
         - If partially filled: Cancel remaining, place market for rest (Edge Case #7)
         - If unfilled: Cancel and place market order
-        
+
         Args:
             pending_orders: Tracking info from Monday's limit orders
             total_capital: Total capital to allocate (for market orders)
-            
+            allocation_pct: Kelly MHVRP allocation (0.50-1.0), scales effective capital
+
         Returns:
             Dict of final order tracking info
         """
+        effective_capital = total_capital * allocation_pct
         print(f"\n{'='*60}")
         print(f"TUESDAY MARKET ORDER FALLBACK")
         print(f"{'='*60}")
         print(f"Checking {len(pending_orders)} pending orders from Monday...")
+        print(f"Health Alloc: {allocation_pct:.1%} | Effective: ${effective_capital:,.2f}")
         sys.stdout.flush()
-        
-        capital_per_position = total_capital / MAX_POSITIONS
+
+        capital_per_position = effective_capital / MAX_POSITIONS
         final_tracking = {}
         
         # P0-FIX: Query current positions ONCE before processing orders.
@@ -1275,26 +1284,31 @@ class IBAutoTrader(EWrapper, EClient):
         
         return final_tracking
         
-    def execute_signals(self, signals: List[dict], max_positions: int, 
-                       total_capital: float) -> Dict[str, List[int]]:
+    def execute_signals(self, signals: List[dict], max_positions: int,
+                       total_capital: float,
+                       allocation_pct: float = 1.0) -> Dict[str, List[int]]:
         """
         Execute trading signals from the bot.
-        
+
         Args:
             signals: List of signal dictionaries from trading bot
             max_positions: Maximum number of positions to open
             total_capital: Total capital to allocate
-            
+            allocation_pct: Kelly MHVRP allocation (0.50-1.0), scales effective capital
+
         Returns:
             Dict mapping symbols to their order IDs
         """
-        # Calculate capital per position
-        capital_per_position = total_capital / max_positions
-        
+        # Apply Kelly MHVRP allocation to effective capital
+        effective_capital = total_capital * allocation_pct
+        capital_per_position = effective_capital / max_positions
+
         print(f"\n{'='*60}")
         print(f"EXECUTING TRADES")
         print(f"{'='*60}")
         print(f"Total Capital: ${total_capital:,.2f}")
+        print(f"Health Alloc:  {allocation_pct:.1%} (Kelly MHVRP)")
+        print(f"Effective Cap: ${effective_capital:,.2f}")
         print(f"Max Positions: {max_positions}")
         print(f"Per Position:  ${capital_per_position:,.2f}")
         print(f"{'='*60}")
@@ -1408,7 +1422,7 @@ def load_signals(filepath: str) -> List[dict]:
     """Load signals from JSON file."""
     with open(filepath, 'r') as f:
         data = json.load(f)
-    
+
     # Handle the trading bot's output format
     if isinstance(data, dict):
         if 'all_signals' in data:
@@ -1421,6 +1435,48 @@ def load_signals(filepath: str) -> List[dict]:
         return data
     else:
         return []
+
+
+def load_allocation_pct(filepath: str) -> float:
+    """
+    Load allocation_pct from signals JSON file.
+    Returns the Kelly MHVRP allocation percentage (0.50 to 1.0).
+    Falls back to 1.0 (100%) if not present.
+    """
+    try:
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+        if isinstance(data, dict) and 'allocation_pct' in data:
+            pct = float(data['allocation_pct'])
+            if 0.0 < pct <= 1.0:
+                return pct
+            print(f"  ⚠️ allocation_pct={pct} out of range, using 1.0")
+        return 1.0
+    except Exception as e:
+        print(f"  ⚠️ Could not load allocation_pct: {e}, using 1.0")
+        return 1.0
+
+
+def inject_allocation_into_signals(signals_path: str, allocation_pct: float,
+                                     health_score: float, regime: str):
+    """
+    Inject market health allocation data into the signals JSON file.
+    Called after market_health pipeline runs, before trade execution.
+    """
+    try:
+        with open(signals_path, 'r') as f:
+            data = json.load(f)
+
+        data['allocation_pct'] = round(allocation_pct, 4)
+        data['health_score'] = round(health_score, 4)
+        data['health_regime'] = regime
+
+        with open(signals_path, 'w') as f:
+            json.dump(data, f, indent=2, default=str)
+
+        print(f"  ✅ Injected allocation_pct={allocation_pct:.1%} [{regime}] into {signals_path}")
+    except Exception as e:
+        print(f"  ⚠️ Could not inject allocation into signals: {e}")
 
 
 def get_cst_now() -> datetime:
@@ -1747,6 +1803,28 @@ def run_scheduled_cycle(port: int = PAPER_TRADING_PORT):
                     if signals_path:
                         last_signal_gen_week = monday_of_week
                         print(f"\n[{get_cst_now().strftime('%Y-%m-%d %H:%M:%S')} CST] ✅ Signals generated successfully")
+
+                        # Phase 0b: Run market health pipeline → inject allocation_pct
+                        print(f"\n[{get_cst_now().strftime('%Y-%m-%d %H:%M:%S')} CST] 🏥 MARKET HEALTH PIPELINE")
+                        print(f"{'='*60}")
+                        sys.stdout.flush()
+                        try:
+                            from market_health import run_pipeline as run_health_pipeline
+                            health_report = run_health_pipeline()
+                            if health_report and 'allocation_pct' in health_report:
+                                script_dir = os.path.dirname(os.path.abspath(__file__))
+                                sig_path = os.path.join(script_dir, SIGNALS_FILE)
+                                inject_allocation_into_signals(
+                                    sig_path,
+                                    health_report['allocation_pct'],
+                                    health_report.get('health_score', 0.0),
+                                    health_report.get('regime', 'UNKNOWN'))
+                            else:
+                                print(f"   ⚠️ Health pipeline returned no allocation — using 100%")
+                        except Exception as e:
+                            print(f"   ⚠️ Health pipeline failed: {e} — using 100% allocation")
+                        sys.stdout.flush()
+
                         print(f"   Limit orders will execute at {LIMIT_ORDER_HOUR}:{LIMIT_ORDER_MINUTE:02d} CST")
                         sys.stdout.flush()
                         
@@ -1884,8 +1962,13 @@ def run_scheduled_cycle(port: int = PAPER_TRADING_PORT):
                     # Execute limit orders (excluding already-placed tickers)
                     # Incremental save: each order is persisted immediately inside
                     # execute_monday_limit_orders to survive mid-batch crashes.
+                    # Load allocation_pct from signals JSON (injected by Phase 0b)
+                    script_dir_alloc = os.path.dirname(os.path.abspath(__file__))
+                    alloc_pct = load_allocation_pct(os.path.join(script_dir_alloc, SIGNALS_FILE))
+
                     tracking_map = trader.execute_monday_limit_orders(
                         signals, MAX_POSITIONS, total_capital,
+                        allocation_pct=alloc_pct,
                         exclude_tickers=exclude_tickers,
                         existing_tracking=existing_pending
                     )
@@ -2010,8 +2093,12 @@ def run_scheduled_cycle(port: int = PAPER_TRADING_PORT):
                             time.sleep(3600)
                         continue
                     
+                    # Load allocation_pct from signals JSON (persisted from Monday)
+                    script_dir_t = os.path.dirname(os.path.abspath(__file__))
+                    alloc_pct_t = load_allocation_pct(os.path.join(script_dir_t, SIGNALS_FILE))
+
                     final_tracking = trader.execute_tuesday_market_fallback(
-                        pending_orders, total_capital
+                        pending_orders, total_capital, allocation_pct=alloc_pct_t
                     )
                     
                     clear_pending_orders()
@@ -2144,20 +2231,28 @@ def execute_once(signals_path: str, close_first: bool = True,
             print("❌ Could not get account value from IB, using $100,000 default")
             total_capital = 100000
         
+        # Load allocation_pct from signals file
+        alloc_pct_manual = load_allocation_pct(signals_path)
+        effective_cap = total_capital * alloc_pct_manual
+
         print(f"\n--- Opening new positions ---")
         print(f"Account Value: ${total_capital:,.2f} (from IB)")
-        print(f"Per Position: ${total_capital/MAX_POSITIONS:,.2f} (1/{MAX_POSITIONS})")
+        print(f"Health Alloc:  {alloc_pct_manual:.1%} (Kelly MHVRP)")
+        print(f"Effective Cap: ${effective_cap:,.2f}")
+        print(f"Per Position: ${effective_cap/MAX_POSITIONS:,.2f} (1/{MAX_POSITIONS})")
         print(f"Order Type: {'LIMIT (+0.1%)' if use_limit else 'MARKET'}")
-        
+
         # Execute trades using new methods
         if use_limit:
-            order_map = trader.execute_monday_limit_orders(signals, MAX_POSITIONS, total_capital)
+            order_map = trader.execute_monday_limit_orders(
+                signals, MAX_POSITIONS, total_capital, allocation_pct=alloc_pct_manual)
             # Incremental save happens inside the method; final save for completeness
             if order_map:
                 save_pending_orders(order_map)
         else:
             # Legacy market order execution
-            order_map = trader.execute_signals(signals, MAX_POSITIONS, total_capital)
+            order_map = trader.execute_signals(
+                signals, MAX_POSITIONS, total_capital, allocation_pct=alloc_pct_manual)
         
         print(f"\n{'='*60}")
         print(f"EXECUTION COMPLETE")

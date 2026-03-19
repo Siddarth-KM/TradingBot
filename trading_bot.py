@@ -146,6 +146,7 @@ def generate_trading_signals(
     indexes_to_analyze=None,
     prediction_window=PREDICTION_WINDOW,
     start_date=None,
+    end_date=None,
     force_refresh=False
 ):
     """
@@ -155,6 +156,7 @@ def generate_trading_signals(
         indexes_to_analyze: List of index names to process
         prediction_window: Days ahead to predict (default: 5)
         start_date: Historical data start date (default: 18 months ago)
+        end_date: Historical data end date (default: today) - for backtesting
         force_refresh: Force data re-download (default: False)
         
     Returns:
@@ -177,7 +179,7 @@ def generate_trading_signals(
     
     # Download market data once (shared across all indexes)
     # print("\n📥 Downloading market reference data...")
-    market_data_cache = download_market_data_cache(start_date, force_refresh)
+    market_data_cache = download_market_data_cache(start_date, end_date, force_refresh)
     
     all_index_results = {}
     
@@ -195,7 +197,7 @@ def generate_trading_signals(
         try:
             # Step 1: Download index constituents (with cross-index dedup)
             # print(f"📥 Downloading {index_name} constituent data...")
-            result = download_index_data(index_name, start_date, force_refresh,
+            result = download_index_data(index_name, start_date, end_date, force_refresh,
                                          shared_stock_cache=shared_stock_cache)
             
             if isinstance(result, tuple):
@@ -339,6 +341,8 @@ def main():
                        help='Force refresh of cached data')
     parser.add_argument('--start-date', type=str,
                        help='Historical data start date (YYYY-MM-DD, default: 18 months ago)')
+    parser.add_argument('--end-date', type=str,
+                       help='Historical data end date (YYYY-MM-DD, default: today) - for backtesting')
     
     args = parser.parse_args()
     
@@ -376,6 +380,7 @@ def main():
         indexes_to_analyze=args.indexes,
         prediction_window=args.window,
         start_date=args.start_date,
+        end_date=args.end_date,
         force_refresh=args.refresh
     )
     

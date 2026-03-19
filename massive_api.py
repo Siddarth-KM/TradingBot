@@ -21,10 +21,33 @@ except ImportError:
     print("WARNING: massive package not installed. Run: pip install massive")
 
 # ============================================================================
+# LOAD .env FILE
+# ============================================================================
+
+def _load_dotenv(filepath='.env'):
+    """Load key=value pairs from .env file into os.environ."""
+    try:
+        env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filepath)
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#') or '=' not in line:
+                    continue
+                key, _, value = line.partition('=')
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if value and key not in os.environ:  # don't override existing env vars
+                    os.environ[key] = value
+    except FileNotFoundError:
+        pass
+
+_load_dotenv()
+
+# ============================================================================
 # CONFIGURATION
 # ============================================================================
 
-# Massive.com API key - loaded from environment variable (never hardcode)
+# Massive.com API key - loaded from .env or environment variable
 MASSIVE_API_KEY = os.environ.get("MASSIVE_API_KEY", "")
 if not MASSIVE_API_KEY:
     logging.warning("MASSIVE_API_KEY not set. Export it: export MASSIVE_API_KEY=your_key_here")

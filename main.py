@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
-# Use Massive.com API instead of yfinance for reliable datacenter access
 import massive_api as yf
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
@@ -556,14 +555,21 @@ def scrape_index_constituents(index_name, force_refresh=False):
 
     # ...existing code...
 
-def download_market_data_cache(start_date, force_refresh=False):
-    """Download and cache market data for cross-asset features"""
+def download_market_data_cache(start_date, end_date=None, force_refresh=False):
+    """Download and cache market data for cross-asset features
+    
+    Args:
+        start_date: Historical data start date
+        end_date: Historical data end date (default: today) - for backtesting
+        force_refresh: Force data re-download
+    """
     global market_data_cache
     
     # Clean up stale cache entries before downloading new data
     clear_stale_cache()
     
-    cache_key = f"market_data_{start_date.replace('-', '')}"
+    end_suffix = end_date.replace('-', '') if end_date else 'today'
+    cache_key = f"market_data_{start_date.replace('-', '')}_{end_suffix}"
     
     if not force_refresh:
         cached_data = get_cached_data(cache_key)
@@ -580,7 +586,7 @@ def download_market_data_cache(start_date, force_refresh=False):
         def fetch_market_symbol(symbol):
             try:
                 # print(f"[download_market_data_cache] Downloading {symbol}...")
-                df = yf.download(symbol, start=start_date, progress=False)
+                df = yf.download(symbol, start=start_date, end=end_date, progress=False)
                 
                 if df is not None and not df.empty and len(df) >= 50:
                     # Add validation to flatten any nested arrays
@@ -611,13 +617,14 @@ def download_market_data_cache(start_date, force_refresh=False):
     # print(f"[download_market_data_cache] Successfully cached {len(market_data_cache)} market symbols")
     return market_data_cache
 
-def download_index_data(index_name, start_date, force_refresh=False, shared_stock_cache=None):
+def download_index_data(index_name, start_date, end_date=None, force_refresh=False, shared_stock_cache=None):
     """
     Download OHLCV data for all tickers in an index.
     
     Args:
         index_name: Index identifier (SPY, NASDAQ, SP400, SPSM)
         start_date: Historical data start date
+        end_date: Historical data end date (default: today) - for backtesting
         force_refresh: Force data re-download
         shared_stock_cache: Optional dict of {ticker: DataFrame} already downloaded
                            from prior index runs. Tickers present here are skipped
@@ -653,7 +660,13 @@ def download_index_data(index_name, start_date, force_refresh=False, shared_stoc
         tickers_to_download = list(tickers)
     # ─────────────────────────────────────────────────────────────
 
-    end_date = datetime.today()
+    # Use provided end_date or default to today
+    if end_date is None:
+        end_date_dt = datetime.today()
+    elif isinstance(end_date, str):
+        end_date_dt = datetime.strptime(end_date, '%Y-%m-%d')
+    else:
+        end_date_dt = end_date
     stock_data = dict(cached_hits)  # Start with cache hits
 
     if not tickers_to_download:
@@ -663,12 +676,12 @@ def download_index_data(index_name, start_date, force_refresh=False, shared_stoc
         return stock_data, False, len(stock_data), failed_downloads
 
     try:
-        df = yf.download(tickers_to_download, start=start_date, end=end_date, group_by='ticker', progress=False)
+        df = yf.download(tickers_to_download, start=start_date, end=end_date_dt, group_by='ticker', progress=False)
         fallback_to_threadpool = False
         if df is None or df.empty or (len(tickers_to_download) > 1 and not isinstance(df.columns, pd.MultiIndex)):
             def fetch_ticker(ticker):
                 try:
-                    tdf = yf.download(ticker, start=start_date, end=end_date, progress=False)
+                    tdf = yf.download(ticker, start=start_date, end=end_date_dt, progress=False)
                     if tdf is not None and not tdf.empty and len(tdf) >= 50:
                         for col in tdf.columns:
                             if tdf[col].dtype == 'object':
