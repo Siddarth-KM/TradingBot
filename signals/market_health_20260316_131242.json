@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-03-16T13:12:42.736234",
+  "health_score": -0.2523,
+  "allocation_pct": 0.6402,
+  "components": {
+    "market_internals": {
+      "score": -0.3218,
+      "weight": 0.35,
+      "weighted_contribution": -0.1126,
+      "details": {
+        "breadth_pct_above_sma50": 28.6,
+        "breadth_score": -0.429,
+        "advancing": 2,
+        "declining": 12,
+        "ad_ratio_score": -0.714,
+        "near_52w_high": 0,
+        "near_52w_low": 0,
+        "high_low_score": 0.0,
+        "mcclellan_oscillator": -1.517,
+        "mcclellan_score": -0.144,
+        "composite_score": -0.3218,
+        "sub_score_count": 4
+      }
+    },
+    "geopolitical_risk": {
+      "score": -0.2387,
+      "weight": 0.25,
+      "weighted_contribution": -0.0597,
+      "details": {
+        "vix_current": 27.19,
+        "vix_ma20": 22.27,
+        "vix_score": -1.0,
+        "hyg_lqd_ratio": 0.7316,
+        "hyg_lqd_ma20": 0.7257,
+        "credit_score": 0.164,
+        "gld_5d_return": -2.96,
+        "gold_score": 0.296,
+        "oil_annual_vol": 64.9,
+        "oil_score": -0.496,
+        "dxy_5d_return": 1.06,
+        "dxy_score": -0.158,
+        "composite_score": -0.2387
+      }
+    },
+    "news_sentiment": {
+      "score": -0.4,
+      "weight": 0.2,
+      "weighted_contribution": -0.08,
+      "details": {
+        "vix_current": 27.19,
+        "composite_score": -0.4,
+        "source": "fallback_vix"
+      }
+    },
+    "economic_calendar": {
+      "score": 0.0,
+      "weight": 0.2,
+      "weighted_contribution": 0.0,
+      "details": {
+        "composite_score": 0.0,
+        "source": "fallback_neutral",
+        "note": "FRED API unavailable \u2014 assuming neutral economic outlook"
+      }
+    }
+  },
+  "event_horizon": "2026-03-16 to 2026-03-23"
+}

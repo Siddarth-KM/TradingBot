@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-03-04T16:04:16.285210",
+  "prediction_window": 5,
+  "total_signals": 8,
+  "signals_by_index": {
+    "SPY": [
+      {
+        "ticker": "SWK",
+        "index": "SPY",
+        "predicted_return": 0.0936,
+        "direction": "up",
+        "direction_probability": 60.0,
+        "last_close": 89.25,
+        "limit_sell": 94.26,
+        "timestamp": "2026-03-04T16:04:16.284987"
+      },
+      {
+        "ticker": "ALGN",
+        "index": "SPY",
+        "predicted_return": 0.07683,
+        "direction": "up",
+        "direction_probability": 62.5,
+        "last_close": 185.53,
+        "limit_sell": 194.44,
+        "timestamp": "2026-03-04T16:04:16.285019"
+      }
+    ],
+    "NASDAQ": [
+      {
+        "ticker": "GOOGL",
+        "index": "NASDAQ",
+        "predicted_return": 0.07675,
+        "direction": "up",
+        "direction_probability": 65.5,
+        "last_close": 310.9,
+        "limit_sell": 326.53,
+        "timestamp": "2026-03-04T16:04:16.285042"
+      },
+      {
+        "ticker": "AVGO",
+        "index": "NASDAQ",
+        "predicted_return": 0.07596,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 325.49,
+        "limit_sell": 339.83,
+        "timestamp": "2026-03-04T16:04:16.285061"
+      }
+    ],
+    "SP400": [
+      {
+        "ticker": "VFC",
+        "index": "SP400",
+        "predicted_return": 0.11225,
+        "direction": "up",
+        "direction_probability": 59.0,
+        "last_close": 19.77,
+        "limit_sell": 21.08,
+        "timestamp": "2026-03-04T16:04:16.285080"
+      },
+      {
+        "ticker": "DY",
+        "index": "SP400",
+        "predicted_return": 0.10216,
+        "direction": "up",
+        "direction_probability": 66.0,
+        "last_close": 428.58,
+        "limit_sell": 457.48,
+        "timestamp": "2026-03-04T16:04:16.285099"
+      }
+    ],
+    "SPSM": [
+      {
+        "ticker": "CLSK",
+        "index": "SPSM",
+        "predicted_return": 0.16433,
+        "direction": "up",
+        "direction_probability": 58.0,
+        "last_close": 10.35,
+        "limit_sell": 11.34,
+        "timestamp": "2026-03-04T16:04:16.285118"
+      },
+      {
+        "ticker": "WRLD",
+        "index": "SPSM",
+        "predicted_return": 0.14968,
+        "direction": "up",
+        "direction_probability": 64.0,
+        "last_close": 128.17,
+        "limit_sell": 140.45,
+        "timestamp": "2026-03-04T16:04:16.285134"
+      }
+    ]
+  },
+  "all_signals": [
+    {
+      "ticker": "CLSK",
+      "index": "SPSM",
+      "predicted_return": 0.16433,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 10.35,
+      "limit_sell": 11.34,
+      "timestamp": "2026-03-04T16:04:16.285118"
+    },
+    {
+      "ticker": "WRLD",
+      "index": "SPSM",
+      "predicted_return": 0.14968,
+      "direction": "up",
+      "direction_probability": 64.0,
+      "last_close": 128.17,
+      "limit_sell": 140.45,
+      "timestamp": "2026-03-04T16:04:16.285134"
+    },
+    {
+      "ticker": "VFC",
+      "index": "SP400",
+      "predicted_return": 0.11225,
+      "direction": "up",
+      "direction_probability": 59.0,
+      "last_close": 19.77,
+      "limit_sell": 21.08,
+      "timestamp": "2026-03-04T16:04:16.285080"
+    },
+    {
+      "ticker": "DY",
+      "index": "SP400",
+      "predicted_return": 0.10216,
+      "direction": "up",
+      "direction_probability": 66.0,
+      "last_close": 428.58,
+      "limit_sell": 457.48,
+      "timestamp": "2026-03-04T16:04:16.285099"
+    },
+    {
+      "ticker": "SWK",
+      "index": "SPY",
+      "predicted_return": 0.0936,
+      "direction": "up",
+      "direction_probability": 60.0,
+      "last_close": 89.25,
+      "limit_sell": 94.26,
+      "timestamp": "2026-03-04T16:04:16.284987"
+    },
+    {
+      "ticker": "ALGN",
+      "index": "SPY",
+      "predicted_return": 0.07683,
+      "direction": "up",
+      "direction_probability": 62.5,
+      "last_close": 185.53,
+      "limit_sell": 194.44,
+      "timestamp": "2026-03-04T16:04:16.285019"
+    },
+    {
+      "ticker": "GOOGL",
+      "index": "NASDAQ",
+      "predicted_return": 0.07675,
+      "direction": "up",
+      "direction_probability": 65.5,
+      "last_close": 310.9,
+      "limit_sell": 326.53,
+      "timestamp": "2026-03-04T16:04:16.285042"
+    },
+    {
+      "ticker": "AVGO",
+      "index": "NASDAQ",
+      "predicted_return": 0.07596,
+      "direction": "up",
+      "direction_probability": 58.0,
+      "last_close": 325.49,
+      "limit_sell": 339.83,
+      "timestamp": "2026-03-04T16:04:16.285061"
+    }
+  ],
+  "summary": {
+    "indexes_analyzed": [
+      "SPY",
+      "NASDAQ",
+      "SP400",
+      "SPSM"
+    ],
+    "signals_per_index": {
+      "SPY": 2,
+      "NASDAQ": 2,
+      "SP400": 2,
+      "SPSM": 2
+    },
+    "avg_predicted_return": 10.64,
+    "best_signal": "CLSK",
+    "best_return": 0.16433
+  }
+}
