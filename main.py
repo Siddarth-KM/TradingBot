@@ -2500,9 +2500,9 @@ def predict():
         print(f"⏰ Prediction window: {prediction_window} days")
         print(f"🤖 Starting trading bot analysis for {index}...")
         print("Downloading market reference data...")
-        market_data_cache = download_market_data_cache(start_date, force_refresh)
+        market_data_cache = download_market_data_cache(start_date, force_refresh=force_refresh)
         print("Downloading stock data...")
-        result = download_index_data(index, start_date, force_refresh=force_refresh)
+        result = download_index_data(index, start_date, end_date=None, force_refresh=force_refresh)
         if isinstance(result, tuple):
             stock_data, fallback_used, successful_downloads, failed_downloads = result
         else:
