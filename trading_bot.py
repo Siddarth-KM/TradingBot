@@ -383,7 +383,27 @@ def main():
         end_date=args.end_date,
         force_refresh=args.refresh
     )
-    
+
+    # Run market health pipeline and embed allocation into results
+    try:
+        from market_health import run_pipeline as run_health_pipeline
+        health_report = run_health_pipeline()
+        if health_report and 'allocation_pct' in health_report:
+            results['allocation_pct'] = round(health_report['allocation_pct'], 4)
+            results['health_score'] = round(health_report.get('health_score', 0.0), 4)
+            results['health_regime'] = health_report.get('regime', 'UNKNOWN')
+            print(f"\n🏥 Portfolio Allocation: {results['allocation_pct']:.1%} [{results['health_regime']}]")
+        else:
+            results['allocation_pct'] = 1.0
+            results['health_score'] = 0.0
+            results['health_regime'] = 'UNKNOWN'
+            print("\n⚠️ Health pipeline returned no allocation — defaulting to 100%")
+    except Exception as e:
+        results['allocation_pct'] = 1.0
+        results['health_score'] = 0.0
+        results['health_regime'] = 'UNKNOWN'
+        print(f"\n⚠️ Health pipeline failed: {e} — defaulting to 100% allocation")
+
     # Save results
     json_file = save_signals_to_json(results)
     
