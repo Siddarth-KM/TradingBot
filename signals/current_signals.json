@@ -1,177 +1,177 @@
 {
-  "timestamp": "2026-03-04T16:04:16.285210",
+  "timestamp": "2026-03-31T06:20:37.328547",
   "prediction_window": 5,
   "total_signals": 8,
   "signals_by_index": {
     "SPY": [
       {
-        "ticker": "SWK",
+        "ticker": "TER",
         "index": "SPY",
-        "predicted_return": 0.0936,
+        "predicted_return": 0.04392,
         "direction": "up",
-        "direction_probability": 60.0,
-        "last_close": 89.25,
-        "limit_sell": 94.26,
-        "timestamp": "2026-03-04T16:04:16.284987"
+        "direction_probability": 65.0,
+        "last_close": 276.35,
+        "limit_sell": 284.24,
+        "timestamp": "2026-03-31T06:20:37.319064"
       },
       {
-        "ticker": "ALGN",
+        "ticker": "CIEN",
         "index": "SPY",
-        "predicted_return": 0.07683,
+        "predicted_return": 0.03563,
         "direction": "up",
-        "direction_probability": 62.5,
-        "last_close": 185.53,
-        "limit_sell": 194.44,
-        "timestamp": "2026-03-04T16:04:16.285019"
+        "direction_probability": 61.0,
+        "last_close": 365.0,
+        "limit_sell": 372.93,
+        "timestamp": "2026-03-31T06:20:37.327283"
       }
     ],
     "NASDAQ": [
       {
-        "ticker": "GOOGL",
+        "ticker": "BKR",
         "index": "NASDAQ",
-        "predicted_return": 0.07675,
+        "predicted_return": 0.02923,
         "direction": "up",
-        "direction_probability": 65.5,
-        "last_close": 310.9,
-        "limit_sell": 326.53,
-        "timestamp": "2026-03-04T16:04:16.285042"
+        "direction_probability": 59.0,
+        "last_close": 60.68,
+        "limit_sell": 61.73,
+        "timestamp": "2026-03-31T06:20:37.327825"
       },
       {
-        "ticker": "AVGO",
+        "ticker": "ODFL",
         "index": "NASDAQ",
-        "predicted_return": 0.07596,
+        "predicted_return": 0.02028,
         "direction": "up",
-        "direction_probability": 58.0,
-        "last_close": 325.49,
-        "limit_sell": 339.83,
-        "timestamp": "2026-03-04T16:04:16.285061"
+        "direction_probability": 64.0,
+        "last_close": 189.75,
+        "limit_sell": 192.21,
+        "timestamp": "2026-03-31T06:20:37.328323"
       }
     ],
     "SP400": [
       {
-        "ticker": "VFC",
+        "ticker": "OVV",
         "index": "SP400",
-        "predicted_return": 0.11225,
+        "predicted_return": 0.04583,
         "direction": "up",
-        "direction_probability": 59.0,
-        "last_close": 19.77,
-        "limit_sell": 21.08,
-        "timestamp": "2026-03-04T16:04:16.285080"
+        "direction_probability": 63.0,
+        "last_close": 60.65,
+        "limit_sell": 62.4,
+        "timestamp": "2026-03-31T06:20:37.328352"
       },
       {
-        "ticker": "DY",
+        "ticker": "MKSI",
         "index": "SP400",
-        "predicted_return": 0.10216,
+        "predicted_return": 0.04523,
         "direction": "up",
-        "direction_probability": 66.0,
-        "last_close": 428.58,
-        "limit_sell": 457.48,
-        "timestamp": "2026-03-04T16:04:16.285099"
+        "direction_probability": 61.5,
+        "last_close": 210.47,
+        "limit_sell": 216.32,
+        "timestamp": "2026-03-31T06:20:37.328413"
       }
     ],
     "SPSM": [
       {
-        "ticker": "CLSK",
+        "ticker": "SCHL",
         "index": "SPSM",
-        "predicted_return": 0.16433,
+        "predicted_return": 0.05701,
         "direction": "up",
-        "direction_probability": 58.0,
-        "last_close": 10.35,
-        "limit_sell": 11.34,
-        "timestamp": "2026-03-04T16:04:16.285118"
+        "direction_probability": 66.5,
+        "last_close": 38.83,
+        "limit_sell": 40.3,
+        "timestamp": "2026-03-31T06:20:37.328441"
       },
       {
-        "ticker": "WRLD",
+        "ticker": "PTEN",
         "index": "SPSM",
-        "predicted_return": 0.14968,
+        "predicted_return": 0.0416,
         "direction": "up",
-        "direction_probability": 64.0,
-        "last_close": 128.17,
-        "limit_sell": 140.45,
-        "timestamp": "2026-03-04T16:04:16.285134"
+        "direction_probability": 63.0,
+        "last_close": 11.05,
+        "limit_sell": 11.34,
+        "timestamp": "2026-03-31T06:20:37.328466"
       }
     ]
   },
   "all_signals": [
     {
-      "ticker": "CLSK",
+      "ticker": "SCHL",
       "index": "SPSM",
-      "predicted_return": 0.16433,
+      "predicted_return": 0.05701,
       "direction": "up",
-      "direction_probability": 58.0,
-      "last_close": 10.35,
-      "limit_sell": 11.34,
-      "timestamp": "2026-03-04T16:04:16.285118"
+      "direction_probability": 66.5,
+      "last_close": 38.83,
+      "limit_sell": 40.3,
+      "timestamp": "2026-03-31T06:20:37.328441"
     },
     {
-      "ticker": "WRLD",
-      "index": "SPSM",
-      "predicted_return": 0.14968,
-      "direction": "up",
-      "direction_probability": 64.0,
-      "last_close": 128.17,
-      "limit_sell": 140.45,
-      "timestamp": "2026-03-04T16:04:16.285134"
-    },
-    {
-      "ticker": "VFC",
+      "ticker": "OVV",
       "index": "SP400",
-      "predicted_return": 0.11225,
+      "predicted_return": 0.04583,
+      "direction": "up",
+      "direction_probability": 63.0,
+      "last_close": 60.65,
+      "limit_sell": 62.4,
+      "timestamp": "2026-03-31T06:20:37.328352"
+    },
+    {
+      "ticker": "MKSI",
+      "index": "SP400",
+      "predicted_return": 0.04523,
+      "direction": "up",
+      "direction_probability": 61.5,
+      "last_close": 210.47,
+      "limit_sell": 216.32,
+      "timestamp": "2026-03-31T06:20:37.328413"
+    },
+    {
+      "ticker": "TER",
+      "index": "SPY",
+      "predicted_return": 0.04392,
+      "direction": "up",
+      "direction_probability": 65.0,
+      "last_close": 276.35,
+      "limit_sell": 284.24,
+      "timestamp": "2026-03-31T06:20:37.319064"
+    },
+    {
+      "ticker": "PTEN",
+      "index": "SPSM",
+      "predicted_return": 0.0416,
+      "direction": "up",
+      "direction_probability": 63.0,
+      "last_close": 11.05,
+      "limit_sell": 11.34,
+      "timestamp": "2026-03-31T06:20:37.328466"
+    },
+    {
+      "ticker": "CIEN",
+      "index": "SPY",
+      "predicted_return": 0.03563,
+      "direction": "up",
+      "direction_probability": 61.0,
+      "last_close": 365.0,
+      "limit_sell": 372.93,
+      "timestamp": "2026-03-31T06:20:37.327283"
+    },
+    {
+      "ticker": "BKR",
+      "index": "NASDAQ",
+      "predicted_return": 0.02923,
       "direction": "up",
       "direction_probability": 59.0,
-      "last_close": 19.77,
-      "limit_sell": 21.08,
-      "timestamp": "2026-03-04T16:04:16.285080"
+      "last_close": 60.68,
+      "limit_sell": 61.73,
+      "timestamp": "2026-03-31T06:20:37.327825"
     },
     {
-      "ticker": "DY",
-      "index": "SP400",
-      "predicted_return": 0.10216,
-      "direction": "up",
-      "direction_probability": 66.0,
-      "last_close": 428.58,
-      "limit_sell": 457.48,
-      "timestamp": "2026-03-04T16:04:16.285099"
-    },
-    {
-      "ticker": "SWK",
-      "index": "SPY",
-      "predicted_return": 0.0936,
-      "direction": "up",
-      "direction_probability": 60.0,
-      "last_close": 89.25,
-      "limit_sell": 94.26,
-      "timestamp": "2026-03-04T16:04:16.284987"
-    },
-    {
-      "ticker": "ALGN",
-      "index": "SPY",
-      "predicted_return": 0.07683,
-      "direction": "up",
-      "direction_probability": 62.5,
-      "last_close": 185.53,
-      "limit_sell": 194.44,
-      "timestamp": "2026-03-04T16:04:16.285019"
-    },
-    {
-      "ticker": "GOOGL",
+      "ticker": "ODFL",
       "index": "NASDAQ",
-      "predicted_return": 0.07675,
+      "predicted_return": 0.02028,
       "direction": "up",
-      "direction_probability": 65.5,
-      "last_close": 310.9,
-      "limit_sell": 326.53,
-      "timestamp": "2026-03-04T16:04:16.285042"
-    },
-    {
-      "ticker": "AVGO",
-      "index": "NASDAQ",
-      "predicted_return": 0.07596,
-      "direction": "up",
-      "direction_probability": 58.0,
-      "last_close": 325.49,
-      "limit_sell": 339.83,
-      "timestamp": "2026-03-04T16:04:16.285061"
+      "direction_probability": 64.0,
+      "last_close": 189.75,
+      "limit_sell": 192.21,
+      "timestamp": "2026-03-31T06:20:37.328323"
     }
   ],
   "summary": {
@@ -187,8 +187,11 @@
       "SP400": 2,
       "SPSM": 2
     },
-    "avg_predicted_return": 10.64,
-    "best_signal": "CLSK",
-    "best_return": 0.16433
-  }
+    "avg_predicted_return": 3.98,
+    "best_signal": "SCHL",
+    "best_return": 0.05701
+  },
+  "allocation_pct": 0.9903,
+  "health_score": 0.2059,
+  "health_regime": "FULL"
 }

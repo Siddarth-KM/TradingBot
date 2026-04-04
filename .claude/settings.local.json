@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh -i /c/Users/sidda/Downloads/oracle-tradingbot.key ubuntu@137.131.26.201 \"cd /opt/tradingbot && nohup .venv/bin/python trading_bot.py --indexes SPY NASDAQ SP400 SPSM > /var/log/tradingbot_manual.log 2>&1 & echo PID:$!\")"
+    ]
+  }
+}
