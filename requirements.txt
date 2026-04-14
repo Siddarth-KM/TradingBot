@@ -17,3 +17,4 @@ torch>=2.0.0
 catboost>=1.2.0
 scipy>=1.11.0
 ibapi>=9.81.1
+openpyxl>=3.1.0

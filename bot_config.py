@@ -29,7 +29,9 @@ CACHE_DURATION = 24 * 60 * 60  # 24 hours in seconds
 CACHE_DIR = 'cache'
 
 # Threading
-THREAD_POOL_SIZE = 10
+# Oracle VM has 2 cores and 956MB RAM; higher values cause OOM during model training.
+# Keep this at 2 unless deployment target changes.
+THREAD_POOL_SIZE = 2
 
 # Data quality
 MIN_DATA_POINTS = 50

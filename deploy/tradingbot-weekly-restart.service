@@ -1,0 +1,7 @@
+[Unit]
+Description=Weekly restart of tradingbot.service to clear accumulated state
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/systemctl restart tradingbot.service

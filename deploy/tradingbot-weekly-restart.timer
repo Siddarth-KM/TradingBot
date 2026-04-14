@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly restart of tradingbot.service (Sunday 18:00 UTC = 3h before signal gen)
+
+[Timer]
+OnCalendar=Sun *-*-* 18:00:00 UTC
+Persistent=true
+Unit=tradingbot-weekly-restart.service
+
+[Install]
+WantedBy=timers.target
