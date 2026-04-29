@@ -87,24 +87,18 @@ Color scheme:
 
 Email sections:
 
-1. **Header**: "INDEX-LAB Weekly Signals — Week [N] | [date_range]"
-   Subtext: "Generated [generated_at] | [N] positions"
+1. **Header**: "INDEX-LAB — Week [N] | [date_range]"
+   Subtext: "[N] positions · Generated [generated_at]"
 
 2. **Positions Table**:
-   Columns: # | Ticker | ML Pred | Probability | Buy Price | Sell Limit | Timeframe
+   Columns: Ticker | Buy Price | Sell Limit | ML Pred | Probability
    - Sort by pred descending (highest conviction first)
-   - Highlight top 3 rows with an orange left border
    - Format pred as percentage (e.g. 0.044 → 4.40%)
    - Format probability as percentage (e.g. 65.0 → 65.0%)
    - Format buy_price and sell_limit with $ prefix, 2 decimal places
-   - Timeframe column: always show "5 days"
+   - No row numbering, no timeframe column
 
-3. **Sizing Summary**:
-   - Number of positions: [N]
-   - Avg ML Pred (avg predicted_return): [X]%
-   - Avg Probability: [X]%
-
-4. **Footer**: "Validate before trading. This is model output, not financial advice."
+3. **Footer**: single line — "Validate before trading. Model output, not financial advice."
 
 ## Step 5 — Send via Gmail SMTP
 Load credentials from `.env` (python-dotenv) and send via smtplib:

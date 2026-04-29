@@ -106,6 +106,11 @@ shutil.copy2(excel_path, backup_path)
 ```
 
 ## Step 5: Append new week block to Excel
+Wrap the entire load → build → save sequence in a retry loop. If `load_workbook`
+or `wb.save` raises `PermissionError` (file open in Excel), log the attempt number,
+sleep 600 seconds (10 minutes), and retry. No cap on retries — keep going until
+the write succeeds.
+
 Use openpyxl to find the first empty row after the last content row.
 
 Determine the absolute row number for the first ticker data row (call it `data_start`):
