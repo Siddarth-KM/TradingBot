@@ -1,0 +1,15 @@
+[Unit]
+Description=Trading Bot Weekly Signal Generation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/tradingbot
+Environment="PATH=/opt/tradingbot/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=/home/ubuntu"
+ExecStart=/opt/tradingbot/run_signals.sh
+StandardOutput=append:/var/log/tradingbot.log
+StandardError=append:/var/log/tradingbot.log

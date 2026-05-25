@@ -124,7 +124,7 @@ def save_signals_to_json(results, output_dir=OUTPUT_DIR):
     """Save trading signals to JSON file - uses fixed filename that overwrites each time"""
     os.makedirs(output_dir, exist_ok=True)
     
-    # Fixed filename - always overwrites (this is what trade_executor.py looks for)
+    # Fixed filename - always overwrites (consumed by run_signals.sh and downstream agents)
     filename = f"{output_dir}/current_signals.json"
     
     with open(filename, 'w') as f:

@@ -1,8 +1,8 @@
 import ast, sys
-files = ["trade_executor.py", "main.py", "trading_bot.py"]
+files = ["main.py", "trading_bot.py", "validate_deploy.py"]
 for f in files:
     try:
-        ast.parse(open(f).read())
+        ast.parse(open(f, encoding="utf-8").read())
         print(f"{f}: OK")
     except SyntaxError as e:
         print(f"{f}: SYNTAX ERROR: {e}")

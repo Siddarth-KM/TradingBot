@@ -23,12 +23,6 @@ except Exception as e:
     print(f"✗ bot_core: {e}")
 
 try:
-    import trade_executor
-    print("✓ trade_executor imported")
-except Exception as e:
-    print(f"✗ trade_executor: {e}")
-
-try:
     import trading_bot
     print("✓ trading_bot imported")
 except Exception as e:

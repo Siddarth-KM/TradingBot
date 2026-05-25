@@ -1,8 +1,8 @@
 #!/bin/bash
 # Signal generation runner for tradingbot.
-# Primary invocation: trade_executor.py phase 0 calls trading_bot.py directly.
-# Safety-net invocation: cron runs this with --if-stale Mon 23:30 UTC to retry
-# if phase 0 silently missed.
+# Primary invocation: tradingbot-signals.service (systemd timer fires Mon 16:00 CST).
+# Safety-net invocation: cron may run this with --if-stale to retry if the
+# scheduled fire missed.
 #
 # Usage:
 #   run_signals.sh            # always run

@@ -1,0 +1,11 @@
+[Unit]
+Description=Run signal generation Monday 4:00 PM CST
+Requires=tradingbot-signals.service
+
+[Timer]
+OnCalendar=Mon *-*-* 16:00:00 America/Chicago
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

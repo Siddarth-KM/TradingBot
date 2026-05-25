@@ -13,6 +13,12 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import openpyxl
 
+try:
+    import yfinance as yf
+    _YF_AVAILABLE = True
+except ImportError:
+    _YF_AVAILABLE = False
+
 EXCEL_PATH    = r"C:\Users\sidda\OneDrive\Documents\InvestmentTracker.xlsx"
 LOG           = Path("logs/metrics.log")
 TRACKER       = Path("agents/last_metrics_week.txt")
@@ -86,6 +92,56 @@ def f_profit_factor(h_cells):
     pos_sum = "+".join(f"IF({h}>0,{h},0)" for h in h_cells)
     neg_sum = "+".join(f"IF({h}<0,{h},0)" for h in h_cells)
     return f'=IF(({neg_sum})=0,"N/A",({pos_sum})/ABS({neg_sum}))'
+
+
+# ── SPY auto-fill ────────────────────────────────────────────────────────────
+
+def fetch_spy_weekly_return(date_range_str, today_year):
+    """Return SPY weekly return (float) for the week described by date_range_str,
+    e.g. '5/12 - 5/18' (Mon–Sun).  Returns None on any failure.
+    """
+    if not _YF_AVAILABLE:
+        log.warning("yfinance not installed — cannot auto-fill SPY return.")
+        return None
+    try:
+        end_str = date_range_str.split("-")[1].strip()   # "5/18"
+        m, d    = int(end_str.split("/")[0]), int(end_str.split("/")[1])
+        # Infer year: if the date is more than 7 days in the future, use prior year
+        week_end = datetime(today_year, m, d)
+        if week_end > datetime.today() + timedelta(days=7):
+            week_end = datetime(today_year - 1, m, d)
+        week_mon = week_end - timedelta(days=6)   # Monday of that week
+
+        fetch_start = (week_mon - timedelta(days=14)).strftime("%Y-%m-%d")
+        fetch_end   = (week_end + timedelta(days=2)).strftime("%Y-%m-%d")
+
+        data = yf.download("SPY", start=fetch_start, end=fetch_end,
+                           auto_adjust=True, progress=False)
+        if data.empty or len(data) < 2:
+            log.warning("SPY download returned insufficient data.")
+            return None
+
+        import pandas as pd
+        idx = data.index.normalize()
+        ts_end = pd.Timestamp(week_end.date())
+        ts_mon = pd.Timestamp(week_mon.date())
+
+        # Last close on or before week_end (i.e., Friday of the target week)
+        this_week = data[idx <= ts_end]
+        if this_week.empty:
+            return None
+        close_this = float(this_week["Close"].values[-1])
+
+        # Last close strictly before Monday (i.e., Friday of prior week)
+        prior_week = data[idx < ts_mon]
+        if prior_week.empty:
+            return None
+        close_prior = float(prior_week["Close"].values[-1])
+
+        return close_this / close_prior - 1
+    except Exception as e:
+        log.warning(f"SPY fetch failed: {e}")
+        return None
 
 
 # ── Sheet scan helpers ───────────────────────────────────────────────────────
@@ -216,28 +272,24 @@ def main():
     ap.add_argument("--dry-run", action="store_true", help="print formulas without saving")
     args = ap.parse_args()
 
-    # Step 1: open workbook (read-only scan first)
-    try:
-        wb = openpyxl.load_workbook(EXCEL_PATH)
-    except PermissionError:
-        log.error("Excel file is locked; will retry only if doing real write. Exiting.")
-        if args.dry_run:
-            sys.exit(1)
-        # fall through to retry loop later
-        wb = None
-
-    if wb is None:
+    # Step 1: open workbook in formula mode (no data_only — avoids stale cache issues
+    # with cells openpyxl has written but Excel hasn't recalculated yet).
+    def _load():
         attempt = 1
-        while wb is None:
+        while True:
             try:
-                wb = openpyxl.load_workbook(EXCEL_PATH)
+                return openpyxl.load_workbook(EXCEL_PATH)
             except PermissionError:
+                if args.dry_run:
+                    log.error("Excel file is locked. Exiting.")
+                    sys.exit(1)
                 log.warning(f"Attempt {attempt}: locked. Retry in {RETRY_SECS//60} min.")
                 attempt += 1
                 time.sleep(RETRY_SECS)
 
-    ws = wb.active
-    weeks = scan_weeks(ws)
+    wb_scan = _load()
+    ws_scan = wb_scan.active
+    weeks = scan_weeks(ws_scan)
     if not weeks:
         log.error("No Week N headers found in workbook.")
         sys.exit(1)
@@ -249,18 +301,37 @@ def main():
     ytd_anchor = determine_ytd_anchor(weeks, today_year)
     log.info(f"YTD anchor for {today_year}: Week {ytd_anchor}")
 
-    # Step 2: identify target week — most recent week with K filled but B{cum} blank
-    target_week = None
-    for wk in sorted(weeks.keys(), reverse=True):
+    # Step 2: identify target week — most recent week with K filled but B{cum} blank.
+    # K may be a raw number the user typed OR a formula (e.g. =SUM(...)) they entered in Excel.
+    # Both indicate trade results are present. B_cum is non-empty once the agent has written it
+    # (formula string), so the string-non-empty check is reliable here.
+    def _k_filled(v):
+        return isinstance(v, (int, float)) or (isinstance(v, str) and v.startswith("="))
+
+    # Collect weeks that have trade data (K filled) but no metrics yet (B_cum blank).
+    # Only consider a week if its immediately prior week already has metrics — this
+    # prevents scanning back to ancient weeks that were never part of automated tracking.
+    # Process oldest qualifying week first so the recursive Max DD chain stays valid.
+    def _has_metrics(wk):
         tot = weeks[wk]["total"]
-        k_val = ws.cell(tot, 11).value
-        b_cum = ws.cell(tot + 3, 2).value
-        if isinstance(k_val, (int, float)) and (b_cum is None or b_cum == ""):
-            target_week = wk
-            break
-        if b_cum not in (None, ""):
-            log.info(f"Week {wk} already has metrics ({b_cum!r} in B{tot+3}). Stopping scan.")
-            break
+        v = ws_scan.cell(tot + 3, 2).value
+        return v not in (None, "")
+
+    candidates = []
+    for wk in sorted(weeks.keys()):
+        tot = weeks[wk]["total"]
+        k_val = ws_scan.cell(tot, 11).value
+        b_cum = ws_scan.cell(tot + 3, 2).value
+        if not _k_filled(k_val) or b_cum not in (None, ""):
+            continue
+        prior_wk = max((w for w in weeks if w < wk), default=None)
+        if prior_wk is not None and not _has_metrics(prior_wk):
+            log.info(f"Week {wk}: K filled, metrics blank, but prior week {prior_wk} has no metrics — skipping")
+            continue
+        candidates.append(wk)
+        log.info(f"Week {wk} needs metrics (K filled, B{tot+3} blank)")
+
+    target_week = min(candidates) if candidates else None
 
     if target_week is None:
         log.info("No week needs metrics — nothing to do.")
@@ -269,11 +340,16 @@ def main():
     target_total = weeks[target_week]["total"]
     log.info(f"Target week: {target_week} (Total at row {target_total})")
 
-    # Validate SPY rows are filled
-    spy_adj_h = ws.cell(target_total + 1, 8).value
-    if spy_adj_h in (None, "") or isinstance(spy_adj_h, str) and spy_adj_h.startswith("="):
-        log.warning(f"SPY adjusted return H{target_total+1} not filled — exit; will retry next run.")
-        sys.exit(0)
+    # Auto-fill SPY weekly return if not already present
+    spy_adj_h = ws_scan.cell(target_total + 1, 8).value
+    auto_spy  = None
+    if spy_adj_h in (None, "") or (isinstance(spy_adj_h, str) and spy_adj_h.startswith("=")):
+        log.info(f"SPY H{target_total+1} blank — fetching from yfinance...")
+        auto_spy = fetch_spy_weekly_return(weeks[target_week]["date_range"], today_year)
+        if auto_spy is None:
+            log.warning("Could not fetch SPY return — exiting; will retry next run.")
+            sys.exit(0)
+        log.info(f"SPY weekly return fetched: {auto_spy:.4%}")
 
     # Step 3: build formulas
     b_formulas, d_formulas, N, Y = build_formulas(weeks, target_week, ytd_anchor)
@@ -291,7 +367,17 @@ def main():
         log.info("Dry-run complete; no file changes.")
         return
 
-    # Step 4: write formulas + number formats
+    # Step 4: load fresh workbook for writing, then write formulas + number formats
+    wb = _load()
+    ws = wb.active
+
+    if auto_spy is not None:
+        ws.cell(target_total + 1, 8).value = auto_spy
+        ws.cell(target_total + 2, 8).value = auto_spy
+        ws.cell(target_total + 1, 8).number_format = "0.00%"
+        ws.cell(target_total + 2, 8).number_format = "0.00%"
+        log.info(f"Wrote SPY return {auto_spy:.4%} to H{target_total+1} and H{target_total+2}")
+
     PCT, DEC = "0.00%", "0.00"
     fmts = [PCT, DEC, PCT, DEC, DEC, DEC, PCT, PCT, DEC, DEC]
 
