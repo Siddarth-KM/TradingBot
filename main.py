@@ -1431,6 +1431,26 @@ def train_model_for_stock(ticker, df, model_ids, regime=None, regime_strength=0.
         if len(X_clean) < 30:
             # print(f"[train_model_for_stock] {ticker}: Not enough clean data ({len(X_clean)} rows)")
             return None
+
+        # ------------------------------------------------------------------
+        # Select the LIVE prediction row: the most recent session whose features
+        # are all present. This comes from X (full length, regime-weighted) and
+        # NOT from X_clean -- X_clean necessarily stops `prediction_window` bars
+        # short because the forward-return label does not exist for the newest
+        # bars yet. Before this fix the models predicted on X_train[-1], i.e. the
+        # end of the 80% training window, which measured ~67 trading rows (98
+        # calendar days) behind the latest session. See CHANGELOG 2026-08-29.
+        # ------------------------------------------------------------------
+        rows_all_present = ~np.isnan(X).any(axis=1)
+        x_latest, feature_row_date, feature_row_lag = None, None, None
+        if rows_all_present.any():
+            latest_idx = int(np.flatnonzero(rows_all_present)[-1])
+            x_latest = X[latest_idx]
+            feature_row_lag = int(len(X) - 1 - latest_idx)
+            try:
+                feature_row_date = pd.Timestamp(df_clean.index[latest_idx]).date().isoformat()
+            except Exception:
+                feature_row_date = None
         
         # Print some debugging info about target distribution
         y_std = np.std(y_clean)
@@ -1442,7 +1462,7 @@ def train_model_for_stock(ticker, df, model_ids, regime=None, regime_strength=0.
         model_predictions = {}
         for model_id in model_ids:
             try:
-                pred_result = train_and_predict_model(X_clean, y_clean, model_id, prediction_window)
+                pred_result = train_and_predict_model(X_clean, y_clean, model_id, prediction_window, x_latest=x_latest)
                 if pred_result is not None and len(pred_result) > 0:
                     # Get the last prediction (most recent)
                     if isinstance(pred_result, list):
@@ -1544,6 +1564,8 @@ def train_model_for_stock(ticker, df, model_ids, regime=None, regime_strength=0.
                     'cross_asset_features_used': len(final_cross_asset),
                     'technical_features_used': len(final_technical),
                     'prediction_window': prediction_window,
+                    'feature_row_date': feature_row_date,
+                    'feature_row_lag': feature_row_lag,
                     'validation_applied': False,
                     'validation_warnings': []
                 }
@@ -1628,7 +1650,7 @@ def ensure_list(pred):
     except Exception:
         return [0.0]
 
-def train_and_predict_model(X, y, model_id, prediction_window=1):
+def train_and_predict_model(X, y, model_id, prediction_window=1, x_latest=None):
     """Train actual ML model and make prediction, with robust data preprocessing."""
     if len(X) < MIN_DATA_POINTS:
         # print(f"[train_and_predict_model] Not enough data for model {model_id}: {len(X)} samples")
@@ -1703,6 +1725,22 @@ def train_and_predict_model(X, y, model_id, prediction_window=1):
             # print(f"[train_and_predict_model] Not enough clean data for model {model_id}: {len(X)} samples")
             return [0.0]
         
+        # ------------------------------------------------------------------
+        # Live prediction row: the CURRENT session's features, supplied by the
+        # caller from the full-length matrix. Apply exactly the same inf/extreme
+        # handling the training matrix just received so the row is on the same
+        # footing as what the scaler was fit on.
+        # ------------------------------------------------------------------
+        x_live = None
+        if x_latest is not None:
+            x_live = np.array(x_latest, dtype=float).ravel()
+            inf_live = np.isinf(x_live)
+            if inf_live.any():
+                x_live[inf_live] = np.sign(x_live[inf_live]) * 1e6
+            x_live = np.clip(x_live, -extreme_threshold_X, extreme_threshold_X)
+            if np.isnan(x_live).any() or x_live.shape[0] != X.shape[1]:
+                x_live = None
+
         # Split data: use 80% for training, 20% for out-of-sample prediction
         split_idx = int(len(X) * 0.8)
         X_train = X[:split_idx]
@@ -1898,6 +1936,36 @@ def train_and_predict_model(X, y, model_id, prediction_window=1):
         except Exception as e:
             pass  # print(f"[train_and_predict_model] CV error for model {model_id}: {e}")
         
+        def _refit_full_and_predict_live():
+            """Refit on ALL clean rows, then predict the live row.
+
+            The 80/20 split exists to gate model quality (CV) and to estimate the
+            prediction bias. Once both are computed there is no reason to discard
+            the most recent 20% of history when producing the live forecast, so
+            the estimator is refit on everything first. A second .fit() is a
+            complete refit for every estimator used here -- none warm-start.
+
+            Must only be called AFTER the test-set predictions have been taken
+            off the 80% model, since it mutates `model`.
+
+            Returns None when no live row is available so callers fall back to
+            the previous behaviour rather than failing the ticker.
+            """
+            if x_live is None:
+                return None
+            try:
+                # Same IQR trim the training split received.
+                q25, q75 = np.percentile(y, 25), np.percentile(y, 75)
+                thr = 3.0 * (q75 - q25)
+                keep = (y >= q25 - thr) & (y <= q75 + thr)
+                X_full, y_full = (X[keep], y[keep]) if np.sum(keep) >= 5 else (X, y)
+                scaler_full = StandardScaler() if model_id in [3, 6, 7, 9, 10] else MinMaxScaler()
+                X_full_scaled = scaler_full.fit_transform(X_full)
+                model.fit(X_full_scaled, y_full)
+                return float(model.predict(scaler_full.transform(x_live.reshape(1, -1)))[0])
+            except Exception:
+                return None
+
         # Train the model
         model.fit(X_train_scaled, y_train_clean)
         
@@ -1932,9 +2000,10 @@ def train_and_predict_model(X, y, model_id, prediction_window=1):
                     if abs(original_bias) > max_bias_correction:
                         pass  # print(f"[train_and_predict_model] Model {model_id} bias capped (conservative): {original_bias:.6f} → {prediction_bias:.6f}")
                 
-                # Predict on the LAST training sample with bias correction
-                last_sample = X_train_scaled[-1:]
-                latest_prediction = model.predict(last_sample)[0]
+                # Refit on all clean rows, then predict the CURRENT session's features.
+                latest_prediction = _refit_full_and_predict_live()
+                if latest_prediction is None:
+                    latest_prediction = float(model.predict(X_train_scaled[-1:])[0])
                 
                 # Ensure bias correction doesn't flip prediction sign
                 corrected_prediction = latest_prediction - prediction_bias
@@ -1971,9 +2040,10 @@ def train_and_predict_model(X, y, model_id, prediction_window=1):
                 # print(f"[train_and_predict_model] Model {model_id} raw latest: {latest_prediction:.6f}, corrected: {corrected_prediction:.6f}")
                 return [corrected_prediction]
             else:
-                # Fallback: predict on last sample without bias correction
-                last_sample = X_train_scaled[-1:]
-                prediction = model.predict(last_sample)[0]
+                # Fallback: no reliable bias estimate. Still predict the CURRENT row.
+                prediction = _refit_full_and_predict_live()
+                if prediction is None:
+                    prediction = float(model.predict(X_train_scaled[-1:])[0])
                 
                 # Still apply individual model bounds even without bias correction
                 if prediction_window == 1:
@@ -1993,9 +2063,10 @@ def train_and_predict_model(X, y, model_id, prediction_window=1):
                 return [prediction]
             
         else:
-            # If no test data, predict on last training sample
-            last_sample = X_train_scaled[-1:] 
-            prediction = model.predict(last_sample)[0]
+            # No test split available. Still predict the CURRENT session's features.
+            prediction = _refit_full_and_predict_live()
+            if prediction is None:
+                prediction = float(model.predict(X_train_scaled[-1:])[0])
             
             # Apply individual model bounds even for single predictions
             if prediction_window == 1:
