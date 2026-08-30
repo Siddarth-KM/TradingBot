@@ -108,6 +108,44 @@ INDEX_ETF_TICKERS = {
 }
 
 # ============================================================================
+# DATA FRESHNESS GUARD
+# ============================================================================
+
+# US equity market close in UTC. NYSE closes 16:00 ET; that is 20:00 UTC under
+# EDT (Mar-Nov) and 21:00 UTC under EST (Nov-Mar). We use 20:00 (the earlier,
+# more conservative value) only to decide whether *today's* session is complete
+# — the live run fires ~5h after close so this boundary never bites in practice.
+MARKET_CLOSE_UTC_HOUR = 20
+
+# NYSE full-day closures, 2026-2027 (observed dates — the day the market is
+# actually shut). Used by expected_last_trading_day() so the freshness guard
+# does not false-alarm when the prior session was a holiday. Update annually.
+US_MARKET_HOLIDAYS = {
+    # 2026
+    '2026-01-01',  # New Year's Day
+    '2026-01-19',  # MLK Jr. Day
+    '2026-02-16',  # Washington's Birthday
+    '2026-04-03',  # Good Friday
+    '2026-05-25',  # Memorial Day
+    '2026-06-19',  # Juneteenth
+    '2026-07-03',  # Independence Day (observed, Jul 4 = Sat)
+    '2026-09-07',  # Labor Day
+    '2026-11-26',  # Thanksgiving
+    '2026-12-25',  # Christmas
+    # 2027
+    '2027-01-01',  # New Year's Day
+    '2027-01-18',  # MLK Jr. Day
+    '2027-02-15',  # Washington's Birthday
+    '2027-03-26',  # Good Friday
+    '2027-05-31',  # Memorial Day
+    '2027-06-18',  # Juneteenth (observed, Jun 19 = Sat)
+    '2027-07-05',  # Independence Day (observed, Jul 4 = Sun)
+    '2027-09-06',  # Labor Day
+    '2027-11-25',  # Thanksgiving
+    '2027-12-24',  # Christmas (observed, Dec 25 = Sat)
+}
+
+# ============================================================================
 # OUTPUT SETTINGS
 # ============================================================================
 

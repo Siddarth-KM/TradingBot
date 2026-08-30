@@ -3,6 +3,9 @@ Trading Bot Utility Functions
 Helper functions for data processing, market regime detection, and model selection
 """
 
+import time
+from datetime import datetime, timedelta
+
 import numpy as np
 import pandas as pd
 from ta.momentum import RSIIndicator, WilliamsRIndicator, StochasticOscillator
@@ -10,7 +13,8 @@ from ta.trend import MACD
 from ta.volatility import AverageTrueRange
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 
-from bot_config import MIN_DATA_POINTS
+import massive_api as yf
+from bot_config import MIN_DATA_POINTS, MARKET_CLOSE_UTC_HOUR, US_MARKET_HOLIDAYS
 
 
 def ensure_iterable(obj):
@@ -293,3 +297,85 @@ def detect_market_regime(etf_df):
         return 'sideways', 0.5
     else:
         return 'sideways', 0.5
+
+
+# ============================================================================
+# DATA FRESHNESS GUARD
+# ============================================================================
+# The signal run downloads every ticker through massive_api (Polygon) with an
+# inclusive `to=<today>`. Polygon publishes a session's EOD daily bar a few hours
+# after the 20:00 UTC close, so a run that fires too soon after the close silently
+# receives the PRIOR session's prices for every ticker. These helpers let the bot
+# fail fast (and the health report assert) instead of shipping prior-day prices.
+# See CHANGELOG entry 2026-06-20.
+
+
+def expected_last_trading_day(now_utc=None):
+    """
+    Most recent completed US trading session as of ``now_utc``.
+
+    A session counts as complete once its 20:00 UTC close has passed. We then
+    walk backwards over weekends and ``US_MARKET_HOLIDAYS`` to land on the last
+    real trading day. Examples:
+      - Tue 01:00 UTC (typical run)      -> Monday
+      - Tue 01:00 UTC, Monday a holiday  -> prior Friday
+
+    Args:
+        now_utc: datetime in UTC (defaults to ``datetime.utcnow()``).
+
+    Returns:
+        ``datetime.date`` of the expected latest trading session.
+    """
+    if now_utc is None:
+        now_utc = datetime.utcnow()
+
+    d = now_utc.date()
+    # If today's close has not happened yet, today cannot be the last session.
+    if now_utc.hour < MARKET_CLOSE_UTC_HOUR:
+        d = d - timedelta(days=1)
+    # Walk back over weekends and holidays to the most recent trading day.
+    while d.weekday() >= 5 or d.isoformat() in US_MARKET_HOLIDAYS:
+        d = d - timedelta(days=1)
+    return d
+
+
+def verify_data_freshness(reference_ticker="SPY", retries=3, sleep_s=300, now_utc=None):
+    """
+    Confirm the data provider has published the latest expected session.
+
+    Fresh-downloads ``reference_ticker`` and compares its newest daily bar to
+    ``expected_last_trading_day``. Data that is at least as recent as expected is
+    fresh; anything older means Polygon has not published yet (or is lagging), so
+    we sleep and retry to absorb publish lag.
+
+    Args:
+        reference_ticker: liquid ticker used as the freshness probe.
+        retries: total download attempts before giving up.
+        sleep_s: seconds to wait between attempts.
+        now_utc: override for the reference "now" (testing).
+
+    Returns:
+        (ok: bool, latest_bar_date: date|None, expected: date)
+    """
+    expected = expected_last_trading_day(now_utc)
+    # A short window is enough to read the most recent bar cheaply.
+    start = (expected - timedelta(days=10)).strftime('%Y-%m-%d')
+    latest = None
+
+    for attempt in range(1, retries + 1):
+        try:
+            df = yf.download(reference_ticker, start=start, progress=False)
+            if df is not None and not df.empty:
+                latest = pd.Timestamp(df.index[-1]).date()
+                if latest >= expected:
+                    return True, latest, expected
+        except Exception as e:
+            print(f"[freshness] download error on attempt {attempt}/{retries}: {e}")
+
+        if attempt < retries:
+            print(f"[freshness] {reference_ticker} latest bar {latest} < expected "
+                  f"{expected}; waiting {sleep_s}s then retrying "
+                  f"({attempt}/{retries})...")
+            time.sleep(sleep_s)
+
+    return (latest is not None and latest >= expected), latest, expected

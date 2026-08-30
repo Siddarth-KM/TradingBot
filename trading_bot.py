@@ -56,14 +56,17 @@ def select_top_2_per_index(all_index_results):
     return final_selections
 
 
-def format_trading_signals(selections, prediction_window=5):
+def format_trading_signals(selections, prediction_window=5, data_as_of=None):
     """
     Format top selections as trading signals.
-    
+
     Args:
         selections: dict {index_name: [top stocks]}
         prediction_window: int
-        
+        data_as_of: ISO date (YYYY-MM-DD) of the latest market session the
+            signals were computed from, stamped by the freshness guard so
+            downstream agents/health checks can verify provenance.
+
     Returns:
         dict with structured signals
     """
@@ -107,6 +110,7 @@ def format_trading_signals(selections, prediction_window=5):
     
     return {
         'timestamp': datetime.now().isoformat(),
+        'data_as_of': data_as_of,
         'prediction_window': prediction_window,
         'total_signals': len(all_signals),
         'signals_by_index': signals_by_index,
@@ -169,7 +173,29 @@ def generate_trading_signals(
     # Calculate default start date (18 months ago)
     if start_date is None:
         start_date = get_default_start_date()
-    
+
+    # ------------------------------------------------------------------
+    # Pre-flight data-freshness gate (live runs only).
+    # The systemd timer fires after the US close, but Polygon publishes a
+    # session's EOD bar a few hours later. If the run grabs data before that,
+    # every ticker silently returns the PRIOR session's prices (see CHANGELOG
+    # 2026-06-20). Verify the provider has the latest session BEFORE the ~2h ML
+    # pipeline, and abort cheaply rather than ship stale signals.
+    # Skipped when end_date is set (backtests legitimately ask for older data).
+    # ------------------------------------------------------------------
+    data_as_of = None
+    if end_date is None:
+        fresh, latest_bar, expected_session = verify_data_freshness(reference_ticker="SPY")
+        if not fresh:
+            print(
+                f"❌ STALE DATA: latest available SPY bar is {latest_bar}, "
+                f"expected {expected_session}. Aborting WITHOUT overwriting "
+                f"current_signals.json to avoid shipping prior-day prices."
+            )
+            sys.exit(2)
+        print(f"✅ Data freshness OK — latest session {latest_bar} (expected {expected_session})")
+        data_as_of = latest_bar.isoformat()
+
     # print(f"\n🤖 TRADING BOT STARTED")
     # print(f"📅 Analysis Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     # print(f"📊 Indexes: {indexes_to_analyze}")
@@ -323,10 +349,10 @@ def generate_trading_signals(
     # print(f"{'='*70}")
     
     final_selections = select_top_2_per_index(all_index_results)
-    
+
     # Format output
-    results = format_trading_signals(final_selections, prediction_window)
-    
+    results = format_trading_signals(final_selections, prediction_window, data_as_of=data_as_of)
+
     return results
 
 

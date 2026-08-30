@@ -115,6 +115,30 @@ def validate() -> tuple[bool, list[str], dict]:
     if not isinstance(summary, dict) or not summary:
         errors.append("summary section missing or empty")
 
+    # Data-provenance / freshness assertion (defense in depth).
+    # trading_bot stamps 'data_as_of' with the market session its prices came
+    # from. Confirm that matches the most recent expected trading session so a
+    # stale-data regression (prior-day prices) is caught even if the bot's
+    # pre-flight freshness guard is somehow bypassed. See CHANGELOG 2026-06-20.
+    data_as_of = data.get("data_as_of")
+    info["data_as_of"] = data_as_of
+    try:
+        if str(BOT_DIR) not in sys.path:
+            sys.path.insert(0, str(BOT_DIR))
+        from bot_utils import expected_last_trading_day
+        expected_session = expected_last_trading_day().isoformat()
+        info["expected_session"] = expected_session
+        if not data_as_of:
+            errors.append("data_as_of missing — freshness guard did not stamp the session")
+        elif data_as_of != expected_session:
+            errors.append(
+                f"data_as_of {data_as_of} != expected last session {expected_session} "
+                f"(possible stale-data regression)"
+            )
+    except Exception as e:
+        # Never let the provenance check crash the core health report.
+        info["freshness_check"] = f"skipped: {e}"
+
     return len(errors) == 0, errors, info
 
 
