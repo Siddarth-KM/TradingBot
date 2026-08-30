@@ -2968,11 +2968,18 @@ def add_binary_direction_target(df, prediction_window=5):
     target_column = f'forward_return_{prediction_window}'
     if target_column in df.columns:
         direction_column = f'direction_{prediction_window}'
-        df[direction_column] = (df[target_column] > 0).astype(int)
+        # NaN must stay NaN. The final `prediction_window` rows have no forward
+        # return yet, and (NaN > 0) evaluates False -- which silently labelled the
+        # most recent bars 'down' and fed fabricated bearish rows to the
+        # classifier. Keep the label float so those rows can be masked out of
+        # training. See CHANGELOG 2026-08-29.
+        df[direction_column] = np.where(
+            df[target_column].isna(), np.nan, (df[target_column] > 0).astype(float)
+        )
         # print(f"✅ Added binary direction target '{direction_column}' (1=up, 0=down)")
         
         # Count class distribution for debugging
-        up_count = df[direction_column].sum()
+        up_count = df[direction_column].dropna().sum()
         total = len(df[direction_column].dropna())
         if total > 0:
             up_pct = up_count / total * 100
@@ -3180,7 +3187,17 @@ def predict_direction_confidence(ticker, df, prediction_window=5):
         # print(f"🔄 {ticker}: Training CatBoost model with {X.shape[0]} samples, {X.shape[1]} features")
 
         # Step 4: Create and train the model using Pool-based approach
-        model = create_direction_classifier(X[:-1], y_binary[:-1], cat_features=cat_feature_indices)
+        # Train only on rows with a real label. The mask subsumes the old [:-1]
+        # slice: the final `prediction_window` rows have no forward return yet, and
+        # previously entered training labelled 'down' regardless of outcome.
+        labelled = ~pd.isna(y_binary)
+        if labelled.sum() < MIN_CONFIDENCE_SAMPLES:
+            raise ValueError(
+                f'only {int(labelled.sum())} labelled rows for direction model'
+            )
+        model = create_direction_classifier(
+            X[labelled], y_binary[labelled].astype(int), cat_features=cat_feature_indices
+        )
         # print(f"✅ {ticker}: CatBoost model trained successfully!")
 
         # Step 5: Predict on the latest data point using DataFrame
