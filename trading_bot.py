@@ -93,6 +93,8 @@ def format_trading_signals(selections, prediction_window=5, data_as_of=None):
                 'direction_probability': round(direction_probability, 2),
                 'last_close': round(last_close, 2) if last_close else None,
                 'limit_sell': limit_sell,
+                'feature_row_date': stock.get('feature_row_date'),
+                'feature_row_lag': stock.get('feature_row_lag'),
                 'timestamp': datetime.now().isoformat()
             }
             
@@ -316,10 +318,18 @@ def generate_trading_signals(
                 stock_df = stock_data.get(ticker)
                 last_close = float(stock_df['Close'].iloc[-1]) if stock_df is not None and len(stock_df) > 0 else None
                 
+                # Provenance: which market session the ML features actually came
+                # from. Before the 2026-08-29 fix this silently trailed the latest
+                # session by ~98 calendar days. Surfaced so a regression is visible
+                # in signals.json rather than hidden. See CHANGELOG.
                 stock_predictions.append({
                     'ticker': ticker,
                     'pred': adjusted_pred,
-                    'close': last_close
+                    'close': last_close,
+                    'feature_row_date': (model_preds.get('feature_row_date')
+                                         if isinstance(model_preds, dict) else None),
+                    'feature_row_lag': (model_preds.get('feature_row_lag')
+                                        if isinstance(model_preds, dict) else None)
                 })
             
             # Step 8: Apply directional confidence
