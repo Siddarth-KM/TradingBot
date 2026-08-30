@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Agent 2: Excel Writer. Reads signals from VM via SSH, appends week block to InvestmentTracker.xlsx."""
 
-import json, sys, shutil, subprocess, logging, time
+import argparse, json, sys, shutil, subprocess, logging, time
 from datetime import datetime, timedelta
 from pathlib import Path
 import openpyxl
@@ -34,16 +34,33 @@ def fetch_signals():
     return json.loads(result.stdout)
 
 # ── Step 1: SSH read signals — wait for new data if not ready yet ─────────────
-try:
-    data = fetch_signals()
-except Exception as e:
-    log.error(f"SSH/parse failed: {e}")
-    sys.exit(1)
+# Normal weekly operation needs no flags: signals come from the VM and the week
+# number follows the email agent. --signals-file replays an archived signals
+# JSON to backfill a missed week; --week pins the week number for when
+# last_sent_week.txt is not the right source (e.g. no email was sent).
+ap = argparse.ArgumentParser(description="Agent 2: write a week block to InvestmentTracker.xlsx")
+ap.add_argument("--signals-file", help="read signals from this local JSON instead of the VM")
+ap.add_argument("--week", type=int, help="week number to write (default: agents/last_sent_week.txt)")
+args = ap.parse_args()
+
+if args.signals_file:
+    try:
+        data = json.loads(Path(args.signals_file).read_text())
+    except Exception as e:
+        log.error(f"Could not read {args.signals_file}: {e}")
+        sys.exit(1)
+    log.info(f"REPLAY: signals from {args.signals_file} (VM not contacted)")
+else:
+    try:
+        data = fetch_signals()
+    except Exception as e:
+        log.error(f"SSH/parse failed: {e}")
+        sys.exit(1)
 
 generated_at = data["timestamp"]
 signal_ts    = datetime.fromisoformat(generated_at)
 
-if TRACKER.exists():
+if TRACKER.exists() and not args.signals_file:
     stored     = json.loads(TRACKER.read_text())
     stored_ts  = datetime.fromisoformat(stored["timestamp"])
     wait_start = datetime.now()
@@ -78,8 +95,11 @@ log.info(f"Loaded {len(signals)} signals (generated_at={generated_at})")
 
 # ── Derive week number and date range ─────────────────────────────────────────
 # Use email tracker for week number continuity
-email_tracker = json.loads(Path("agents/last_sent_week.txt").read_text())
-week_number      = email_tracker["week"]
+if args.week is not None:
+    week_number = args.week
+else:
+    email_tracker = json.loads(Path("agents/last_sent_week.txt").read_text())
+    week_number   = email_tracker["week"]
 monday           = signal_ts - timedelta(days=signal_ts.weekday())
 tuesday          = monday + timedelta(days=1)
 following_monday = monday + timedelta(days=7)
