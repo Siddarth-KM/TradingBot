@@ -1283,6 +1283,12 @@ def train_model_for_stock(ticker, df, model_ids, regime=None, regime_strength=0.
         
         # Clean and prepare features with missing data handling
         df_clean = df.copy()
+        # The N-day forward return is the TRAINING TARGET, not a feature. It is NaN for
+        # the final `prediction_window` rows because Close.shift(-N) runs off the end of
+        # the frame. Forward-filling it fabricates labels for those rows, which then
+        # survive the NaN mask below and contaminate y_test -- and therefore the
+        # prediction_bias estimate applied to every prediction. Never fill the target.
+        target_column = f'forward_return_{prediction_window}'
         for col in feature_columns:
             if col in df_clean.columns:
                 # Handle any nested arrays or objects
@@ -1291,8 +1297,8 @@ def train_model_for_stock(ticker, df, model_ids, regime=None, regime_strength=0.
                     series = series.apply(lambda x: x[0] if isinstance(x, (np.ndarray, list)) and len(x) > 0 else x)
                 df_clean[col] = pd.to_numeric(series, errors='coerce')
                 
-                # Forward fill small gaps (up to FORWARD_FILL_LIMIT days)
-                if df_clean[col].isna().any():
+                # Forward fill small gaps (up to FORWARD_FILL_LIMIT days) -- features only.
+                if col != target_column and df_clean[col].isna().any():
                     df_clean[col] = df_clean[col].fillna(method='ffill', limit=FORWARD_FILL_LIMIT)
                     # If still NaN, try backward fill for very early periods
                     df_clean[col] = df_clean[col].fillna(method='bfill', limit=FORWARD_FILL_LIMIT)
